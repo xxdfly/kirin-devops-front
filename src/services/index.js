@@ -1,4 +1,5 @@
 import request from 'utils/request'
+import requestLoginForm from 'utils/formReq'
 import { apiPrefix } from 'utils/config'
 
 import api from './api'
@@ -31,6 +32,27 @@ APIFunction.queryWeather = params => {
   params.key = 'i7sau1babuzwhycn'
   return request({
     url: `${apiPrefix}/weather/now.json`,
+    data: params,
+  })
+}
+
+APIFunction.queryDashboard = params => {
+  return request({
+    url: `/mock/sys/dashboard`,
+    data: params,
+  })
+}
+
+APIFunction.queryUserInfo = params => {
+  return request({
+    url: `/mock/sys/user`,
+    data: params,
+  })
+}
+
+APIFunction.getToken = params => {
+  return requestLoginForm({
+    url: `/oauth/token`,
     data: params,
   })
 }

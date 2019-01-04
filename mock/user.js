@@ -59,7 +59,7 @@ const adminUsers = [
   },
   {
     id: 2,
-    username: '吴彦祖',
+    username: 'xxdfly',
     password: '123456',
     permissions: userPermission.DEVELOPER,
     avatar: randomAvatar(),
@@ -122,12 +122,13 @@ module.exports = {
     const cookies = qs.parse(cookie.replace(/\s/g, ''), { delimiter: ';' })
     const response = {}
     let user = {}
-    if (!cookies.token) {
+    var token = {};
+    if (!cookie) {
       res.status(200).send({ message: 'Not Login' })
       return
     }
-    const token = JSON.parse(cookies.token)
-    if (token) {
+    const tokenObj = JSON.parse(token)
+    if (tokenObj) {
       response.success = token.deadline > new Date().getTime()
     }
     if (response.success) {

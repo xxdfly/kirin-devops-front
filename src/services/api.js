@@ -15,4 +15,10 @@ export default {
   queryPostList: '/posts',
 
   queryDashboard: '/dashboard',
+
+  queryPrivilege: '/privilege/:id',
+  queryPrivilegeList: '/privileges',
+  createPrivilege: 'POST /privilege',
+  updatePrivilege: 'Patch /privilege/:id',
+  removePrivilege: 'DELETE /privilege/:id',
 }

@@ -51,7 +51,7 @@ export default modelExtend(model, {
       })
     },
     *queryWeather({ payload = {} }, { call, put }) {
-      payload.location = 'shenzhen'
+      payload.location = 'hangzhou'
       const result = yield call(queryWeather, payload)
       const { success } = result
       if (success) {

@@ -1,8 +1,8 @@
 module.exports = {
-  siteName: 'AntD Admin',
-  copyright: 'Ant Design Admin  © 2018 zuiidea',
-  logoPath: '/logo.svg',
-  apiPrefix: '/api/v1',
+  siteName: 'Kirin Devops',
+  copyright: 'Kirin Devops © 2018 xiaodong.xuexd',
+  logoPath: '/logo.ico',
+  apiPrefix: '/api/sys',
   fixedHeader: true, // sticky primary layout header
 
   /* Layout configuration, specify which layout to use for route. */

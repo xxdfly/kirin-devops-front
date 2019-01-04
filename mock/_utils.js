@@ -39,7 +39,7 @@ export function randomAvatar() {
 }
 
 export const Constant = {
-  ApiPrefix: '/api/v1',
+  ApiPrefix: '/mock/sys',
   NotFound: {
     message: 'Not Found',
     documentation_url: '',

@@ -50,5 +50,8 @@
   "Username": "用户名",
   "Views": "浏览数",
   "Visibility": "可见性",
-  "You have viewed all notifications.": "您已查看所有通知"
+  "You have viewed all notifications.": "您已查看所有通知",
+  "Request":"模拟请求",
+  "Create Repository":"创建仓库",
+  "Create Privilege" :"创建权限"
 }

@@ -8,7 +8,8 @@ import qs from 'qs'
 const { CancelToken } = axios
 window.cancelRequest = new Map()
 
-export default function request(options) {
+export default function request(options)
+ {
   let { data, url, method = 'get' } = options
   const cloneData = cloneDeep(data)
 
