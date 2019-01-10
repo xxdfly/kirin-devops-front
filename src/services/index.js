@@ -1,6 +1,6 @@
 import request from 'utils/request'
-import requestLoginForm from 'utils/formReq'
 import { apiPrefix } from 'utils/config'
+import qs from 'qs'
 
 import api from './api'
 
@@ -43,17 +43,12 @@ APIFunction.queryDashboard = params => {
   })
 }
 
-APIFunction.queryUserInfo = params => {
-  return request({
-    url: `/mock/sys/user`,
-    data: params,
-  })
-}
-
 APIFunction.getToken = params => {
-  return requestLoginForm({
+  return request({
+    method: `POST`,
     url: `/oauth/token`,
-    data: params,
+    data:qs.stringify(params),
+    contentType: 'application/x-www-form-urlencoded'
   })
 }
 

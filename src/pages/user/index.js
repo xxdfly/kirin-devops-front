@@ -169,11 +169,11 @@ class User extends PureComponent {
   }
 }
 
-User.propTypes = {
-  user: PropTypes.object,
-  location: PropTypes.object,
-  dispatch: PropTypes.func,
-  loading: PropTypes.object,
-}
+// User.propTypes = {
+//   user: PropTypes.object,
+//   location: PropTypes.object,
+//   dispatch: PropTypes.func,
+//   loading: PropTypes.object,
+// }
 
 export default User

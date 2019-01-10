@@ -112,10 +112,10 @@ module.exports = {
     }
   },
 
-  [`GET ${ApiPrefix}/user/logout`](req, res) {
-    res.clearCookie('token')
-    res.status(200).end()
-  },
+  // [`GET ${ApiPrefix}/user/logout`](req, res) {
+  //   res.clearCookie('token')
+  //   res.status(200).end()
+  // },
 
   [`GET ${ApiPrefix}/user`](req, res) {
     const cookie = req.headers.cookie || ''

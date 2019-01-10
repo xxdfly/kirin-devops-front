@@ -51,9 +51,9 @@ class PrivilegeModal extends PureComponent {
               ],
             })(<Input />)}
           </FormItem>
-          <FormItem label={i18n.t`Account`} hasFeedback {...formItemLayout}>
-            {getFieldDecorator('account', {
-              initialValue: item.account,
+          <FormItem label={i18n.t`AuthName`} hasFeedback {...formItemLayout}>
+            {getFieldDecorator('authName', {
+              initialValue: item.authName,
               rules: [
                 {
                   required: true,
@@ -61,9 +61,9 @@ class PrivilegeModal extends PureComponent {
               ],
             })(<Input />)}
           </FormItem>
-          <FormItem label={i18n.t`SecretKey`} hasFeedback {...formItemLayout}>
-            {getFieldDecorator('secretKey', {
-              initialValue: item.secretKey,
+          <FormItem label={i18n.t`AuthRSA`} hasFeedback {...formItemLayout}>
+            {getFieldDecorator('authInfo', {
+              initialValue: item.authInfo,
               rules: [
                 {
                   required: true,

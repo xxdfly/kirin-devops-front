@@ -3,7 +3,7 @@
 import { router } from 'utils'
 import { stringify } from 'qs'
 import store from 'store'
-import { ROLE_TYPE } from 'utils/constant'
+// import { ROLE_TYPE } from 'utils/constant'
 import { queryLayout, pathMatchRegexp } from 'utils'
 import { CANCEL_REQUEST_MESSAGE } from 'utils/constant'
 import { queryRouteList, logoutUser, queryUserInfo } from 'api'
@@ -72,56 +72,67 @@ export default {
   },
   effects: {
     *query({ payload }, { call, put, select }) {
-      const { success, user } = yield call(queryUserInfo, payload)
-      const { locationPathname } = yield select(_ => _.app)
+      try {
+        const { code, respData } = yield call(queryUserInfo, payload)
+        const { locationPathname } = yield select(_ => _.app)
 
-      if (success && user) {
-        const { list } = yield call(queryRouteList)
-        const { permissions } = user
-        let routeList = list
-        if (
-          permissions.role === ROLE_TYPE.ADMIN ||
-          permissions.role === ROLE_TYPE.DEVELOPER
-        ) {
-          permissions.visit = list.map(item => item.id)
-        } else {
-          routeList = list.filter(item => {
-            const cases = [
-              permissions.visit.includes(item.id),
-              item.mpid
-                ? permissions.visit.includes(item.mpid) || item.mpid === '-1'
-                : true,
-              item.bpid ? permissions.visit.includes(item.bpid) : true,
-            ]
-            return cases.every(_ => _)
+        if ( code===1 && respData ) {
+          const { respList } = yield call(queryRouteList)
+          // const { permissions } = user
+          let routeList = respList
+          // if (
+          //   permissions.role === ROLE_TYPE.ADMIN ||
+          //   permissions.role === ROLE_TYPE.DEVELOPER
+          // ) {
+          //   permissions.visit = list.map(item => item.id)
+          // }
+          // else {
+            // routeList = list.filter(item => {
+            //   const cases = [
+            //     permissions.visit.includes(item.id),
+            //     item.mpid
+            //       ? permissions.visit.includes(item.mpid) || item.mpid === '-1'
+            //       : true,
+            //     item.bpid ? permissions.visit.includes(item.bpid) : true,
+            //   ]
+            //   return cases.every(_ => _)
+            // }
+            // )
+          // }
+          yield put({
+            type: 'updateState',
+            payload: {
+              // user,
+              // permissions,
+              routeList,
+            },
           })
-        }
-        yield put({
-          type: 'updateState',
-          payload: {
-            user,
-            permissions,
-            routeList,
-          },
-        })
-        if (pathMatchRegexp('/login', window.location.pathname)) {
+          if (pathMatchRegexp('/login', window.location.pathname)) {
+            router.push({
+              pathname: '/dashboard',
+            })
+          }
+        } else if (queryLayout(config.layouts, locationPathname) !== 'public'||error) {
           router.push({
-            pathname: '/dashboard',
+            pathname: '/login',
+            search: stringify({
+              from: locationPathname,
+            }),
           })
         }
-      } else if (queryLayout(config.layouts, locationPathname) !== 'public') {
+      } catch (error) {
+        console.log(error)
         router.push({
           pathname: '/login',
-          search: stringify({
-            from: locationPathname,
-          }),
         })
       }
+
     },
 
     *signOut({ payload }, { call, put }) {
-      const data = yield call(logoutUser)
+      const data = yield call(logoutUser,payload)
       if (data.success) {
+        localStorage.clear()
         yield put({
           type: 'updateState',
           payload: {

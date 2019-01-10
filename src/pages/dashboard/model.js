@@ -8,7 +8,7 @@ export default modelExtend(model, {
   namespace: 'dashboard',
   state: {
     weather: {
-      city: '深圳',
+      city: '杭州',
       temperature: '30',
       name: '晴',
       icon: '//s5.sencdn.com/web/icons/3d_50/2.png',

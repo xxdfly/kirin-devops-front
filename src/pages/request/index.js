@@ -50,6 +50,7 @@ let uuid = 2
 class RequestPage extends React.Component {
   constructor(props) {
     super(props)
+    console.log("request====================================");
     this.state = {
       method: 'GET',
       url: '/api/v1/routes',

@@ -1,8 +1,8 @@
 export default {
-  queryRouteList: '/routes',
+  queryRouteList: 'POST /user/index',
 
-  queryUserInfo: '/user',
-  logoutUser: '/user/logout',
+  queryUserInfo: 'POST /user/userInfo',
+  logoutUser: 'POST /user/logout',
   loginUser: 'POST /user/login',
 
   queryUser: '/user/:id',
@@ -17,7 +17,7 @@ export default {
   queryDashboard: '/dashboard',
 
   queryPrivilege: '/privilege/:id',
-  queryPrivilegeList: '/privileges',
+  queryPrivilegeList: 'POST /auth/list',
   createPrivilege: 'POST /privilege',
   updatePrivilege: 'Patch /privilege/:id',
   removePrivilege: 'DELETE /privilege/:id',

@@ -76,14 +76,14 @@ export default {
       changeOrigin: true,
       pathRewrite: { '^/api/sys/weather': '/v3/weather' },
     },
-    '/api/sys/user/login':{
+    '/api/sys':{
       target: 'http://127.0.0.1:10010/',
       changeOrigin: true
     },
     '/oauth/token':{
       target: 'http://127.0.0.1:10010/',
       changeOrigin: true
-    }
+    },
   },
   alias: {
     api: resolve(__dirname, './src/services/'),

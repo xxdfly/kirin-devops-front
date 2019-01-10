@@ -2,6 +2,7 @@ import React, { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import { Table, Modal, Divider  } from 'antd'
 import { withI18n } from '@lingui/react'
+import styles from './List.less'
 
 const { confirm } = Modal
 
@@ -32,23 +33,23 @@ class List extends PureComponent {
       key: 'name',
     }, {
       title: '权限账号',
-      dataIndex: 'account',
-      key: 'account',
+      dataIndex: 'authName',
+      key: 'authName',
     }, {
       title: '修改时间',
-      dataIndex: 'updateTime',
-      key: 'updateTime',
+      dataIndex: 'gmtModify',
+      key: 'gmtModify',
     },{
       title: '创建人',
-      key: 'createUser',
-      dataIndex: 'createUser',
+      key: 'creator',
+      dataIndex: 'creator',
     },{
       key: 'secretkey',
       dataIndex: 'secretkey',
     }, {
       title: '最后修改人',
-      key: 'updateUser',
-      dataIndex: 'updateUser',
+      key: 'lastOperator',
+      dataIndex: 'lastOperator',
     }, {
       title: '操作',
       key: 'action',

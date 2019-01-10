@@ -112,7 +112,9 @@ const routerAddLangPrefix = params => {
   if (isString(params)) {
     params = addLangPrefix(params)
   } else {
-    params.pathname = addLangPrefix(params.pathname)
+    if(params!==undefined){
+      params.pathname = addLangPrefix(params.pathname)
+    } 
   }
   return params
 }

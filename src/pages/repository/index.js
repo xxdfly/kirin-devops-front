@@ -154,11 +154,11 @@ class RepositoryPage extends React.Component {
   }
 }
 
-// RepositoryPage.propTypes = {
-//   post: PropTypes.object,
-//   loading: PropTypes.object,
-//   location: PropTypes.object,
-//   dispatch: PropTypes.func,
-// }
+RepositoryPage.propTypes = {
+  post: PropTypes.object,
+  loading: PropTypes.object,
+  location: PropTypes.object,
+  dispatch: PropTypes.func,
+}
 
 export default RepositoryPage
