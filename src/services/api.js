@@ -16,9 +16,8 @@ export default {
 
   queryDashboard: '/dashboard',
 
-  queryPrivilege: '/privilege/:id',
   queryPrivilegeList: 'POST /auth/list',
-  createPrivilege: 'POST /privilege',
-  updatePrivilege: 'Patch /privilege/:id',
-  removePrivilege: 'DELETE /privilege/:id',
+  createPrivilege: 'POST /auth/save',
+  updatePrivilege: 'POST /auth/update',
+  removePrivilege: 'POST /auth/delete',
 }

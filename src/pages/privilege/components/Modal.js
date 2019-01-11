@@ -29,7 +29,6 @@ class PrivilegeModal extends PureComponent {
         ...getFieldsValue(),
         key: item.key,
       }
-      data.address = data.address.join(' ')
       onOk(data)
     })
   }
