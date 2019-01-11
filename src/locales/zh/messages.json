@@ -53,5 +53,17 @@
   "You have viewed all notifications.": "您已查看所有通知",
   "Request":"模拟请求",
   "Create Repository":"创建仓库",
-  "Create Privilege" :"创建权限"
+  "Create Privilege" :"创建权限",
+  "AppName":"代码模块名称",
+  "AppType":"应用类型",
+  "CsvType":"版本控制类型",
+  "Path":"代码路径",
+  "CodeType":"开发语言",
+  "Config":"代码配置",
+  "DevType":"开发类型",
+  "Creator":"应用负责人",
+  "LastOperator":"最后修改人",
+  "Create Code":"创建代码模块",
+  "Update Code":"修改代码模块",
+  "Pick an develop Type":"选择一个开发模式"
 }

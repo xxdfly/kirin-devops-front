@@ -20,4 +20,9 @@ export default {
   createPrivilege: 'POST /auth/save',
   updatePrivilege: 'POST /auth/update',
   removePrivilege: 'POST /auth/delete',
+
+  queryCodeList: 'POST /app/list',
+  createCode: 'POST /app/save',
+  updateCode: 'POST /app/update',
+  removeCode: 'POST /app/delete',
 }
