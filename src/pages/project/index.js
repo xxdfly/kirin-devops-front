@@ -1,240 +1,179 @@
-import React from 'react'
-import { request } from 'utils'
-import { apiPrefix } from 'utils/config'
-import {
-  Row,
-  Col,
-  Select,
-  Input,
-  Button,
-  List,
-  Tag,
-  Form,
-  Icon,
-  Checkbox,
-} from 'antd'
-import classnames from 'classnames'
-import { Trans } from '@lingui/react'
-import api from '@/services/api'
+import React, { PureComponent } from 'react'
+import PropTypes from 'prop-types'
+import { router } from 'utils'
+import { connect } from 'dva'
+import { Row, Col, Button, Popconfirm } from 'antd'
+import { withI18n } from '@lingui/react'
 import { Page } from 'components'
+import { stringify } from 'qs'
+import List from './components/List'
+import Filter from './components/Filter'
+import Modal from './components/Modal'
 
-import styles from '../request/index.less'
+@withI18n()
+@connect(({ project, loading }) => ({ project, loading }))
+class Project extends PureComponent {
+  render() {
+    const { location, dispatch, project, loading, i18n } = this.props
+    const { query, pathname } = location
+    const {
+      list,
+      pagination,
+      currentItem,
+      modalVisible,
+      modalType,
+      selectedRowKeys,
+    } = project
 
-const { Option } = Select
-const InputGroup = Input.Group
-const methods = ['POST', 'GET', 'PUT', 'PATCH', 'DELETE']
-
-const methodTagColor = {
-  GET: 'green',
-  POST: 'orange',
-  DELETE: 'red',
-  PUT: 'geekblue',
-}
-
-let uuid = 2
-@Form.create()
-class RequestPage extends React.Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      method: 'GET',
-      url: '/api/v1/routes',
-      keys: [1],
-      result: null,
-      visible: true,
+    const handleRefresh = newQuery => {
+      router.push({
+        pathname,
+        search: stringify(
+          {
+            ...query,
+            ...newQuery,
+          },
+          { arrayFormat: 'repeat' }
+        ),
+      })
     }
-  }
 
-  handleRequest = () => {
-    const { method, url } = this.state
+    const modalProps = {
+      item: modalType === 'create' ? {} : currentItem,
+      visible: modalVisible,
+      maskClosable: false,
+      confirmLoading: loading.effects[`code/${modalType}`],
+      title: `${
+        modalType === 'create' ? i18n.t`Create Project` : i18n.t`Update Project`
+      }`,
+      wrapClassName: 'vertical-center-modal',
+      onOk(data) {
+        dispatch({
+          type: `project/${modalType}`,
+          payload: data,
+        }).then(() => {
+          handleRefresh()
+        })
+      },
+      onCancel() {
+        dispatch({
+          type: 'project/hideModal',
+        })
+      },
+    }
 
-    this.props.form.validateFields((err, values) => {
-      if (!err) {
-        const params = {}
-        if (values.key) {
-          values.key.forEach((item, index) => {
-            if (item && values.check[index]) {
-              params[item] = values.value[index]
-            }
-          })
-        }
-
-        request({ method, url, data: params }).then(data => {
-          this.setState({
-            result: JSON.stringify(data),
+    const listProps = {
+      dataSource: list,
+      loading: loading.effects['project/query'],
+      pagination,
+      onChange(page) {
+        handleRefresh({
+          page: page.current,
+          pageSize: page.pageSize,
+        })
+      },
+      onDeleteItem(id) {
+        dispatch({
+          type: 'project/delete',
+          payload: id,
+        }).then(() => {
+          handleRefresh({
+            page:
+              list.length === 1 && pagination.current > 1
+                ? pagination.current - 1
+                : pagination.current,
           })
         })
-      }
-    })
-  }
+      },
+      onEditItem(item) {
+        dispatch({
+          type: 'project/showModal',
+          payload: {
+            modalType: 'update',
+            currentItem: item,
+          },
+        })
+      },
+      // rowSelection: {
+      //   selectedRowKeys,
+      //   onChange: keys => {
+      //     dispatch({
+      //       type: 'code/updateState',
+      //       payload: {
+      //         selectedRowKeys: keys,
+      //       },
+      //     })
+      //   },
+      // },
+    }
 
-  handleClickListItem = ({ method, url }) => {
-    this.setState({
-      method,
-      url,
-      keys: [uuid++],
-      result: null,
-    })
-  }
+    const filterProps = {
+      filter: {
+        ...query,
+      },
+      onFilterChange(value) {
+        handleRefresh({
+          ...value,
+          page: 1,
+        })
+      },
+      onAdd() {
+        dispatch({
+          type: 'project/showModal',
+          payload: {
+            modalType: 'create',
+          },
+        })
+      },
+    }
 
-  handleInputChange = e => {
-    this.setState({
-      url: e.target.value,
-    })
-  }
-
-  handleSelectChange = method => {
-    this.setState({
-      method,
-    })
-  }
-
-  handleAddField = () => {
-    const { keys } = this.state
-    const nextKeys = keys.concat(uuid)
-    uuid++
-    this.setState({
-      keys: nextKeys,
-    })
-  }
-
-  handleRemoveField = key => {
-    const { keys } = this.state
-    this.setState({
-      keys: keys.filter(item => item !== key),
-    })
-  }
-
-  handleVisible = () => {
-    this.setState({
-      visible: !this.state.visible,
-    })
-  }
-
-  render() {
-    const { result, url, method, keys, visible } = this.state
-    const { getFieldDecorator } = this.props.form
+    const handleDeleteItems = () => {
+      dispatch({
+        type: 'project/multiDelete',
+        payload: {
+          ids: selectedRowKeys,
+        },
+      }).then(() => {
+        handleRefresh({
+          page:
+            list.length === selectedRowKeys.length && pagination.current > 1
+              ? pagination.current - 1
+              : pagination.current,
+        })
+      })
+    }
 
     return (
       <Page inner>
-        <Row>
-          <Col lg={8} md={24}>
-            <List
-              className={styles.requestList}
-              dataSource={requests}
-              renderItem={item => (
-                <List.Item
-                  className={classnames(styles.listItem, {
-                    [styles.lstItemActive]:
-                      item.method === method && item.url === url,
-                  })}
-                  onClick={this.handleClickListItem.bind(this, item)}
-                >
-                  <span style={{ width: 72 }}>
-                    <Tag
-                      style={{ marginRight: 8 }}
-                      color={methodTagColor[item.method]}
-                    >
-                      {item.method}
-                    </Tag>
-                  </span>
-                  {item.url}
-                </List.Item>
-              )}
-            />
-          </Col>
-          <Col lg={16} md={24}>
-            <Row type="flex" justify="space-between">
-              <InputGroup compact size="large" style={{ flex: 1 }}>
-                <Select
-                  size="large"
-                  value={method}
-                  style={{ width: 100 }}
-                  onChange={this.handleSelectChange}
-                >
-                  {methods.map(item => (
-                    <Option value={item} key={item}>
-                      {item}
-                    </Option>
-                  ))}
-                </Select>
-                <Input
-                  value={url}
-                  onChange={this.handleInputChange}
-                  style={{ width: 'calc(100% - 200px)' }}
-                />
-                <Button
-                  ghost={visible}
-                  type={visible ? 'primary' : ''}
-                  onClick={this.handleVisible}
-                  size="large"
-                >
-                  <Trans>Params</Trans>
-                </Button>
-              </InputGroup>
-
-              <Button
-                size="large"
-                type="primary"
-                style={{ width: 100 }}
-                onClick={this.handleRequest}
+        <Filter {...filterProps} />
+        {selectedRowKeys.length > 0 && (
+          <Row style={{ marginBottom: 24, textAlign: 'right', fontSize: 13 }}>
+            <Col>
+              {`Selected ${selectedRowKeys.length} items `}
+              <Popconfirm
+                title="Are you sure delete these items?"
+                placement="left"
+                onConfirm={handleDeleteItems}
               >
-                <Trans>Send</Trans>
-              </Button>
-            </Row>
-
-            <div
-              className={classnames(styles.paramsBlock, {
-                [styles.hideParams]: !visible,
-              })}
-            >
-              {keys.map((key, index) => (
-                <Row
-                  gutter={8}
-                  type="flex"
-                  justify="start"
-                  align="middle"
-                  key={key}
-                >
-                  <Col style={{ marginTop: 8 }}>
-                    {getFieldDecorator(`check[${key}]`, {
-                      initialValue: true,
-                    })(<Checkbox defaultChecked />)}
-                  </Col>
-                  <Col style={{ marginTop: 8 }}>
-                    {getFieldDecorator(`key[${key}]`)(
-                      <Input placeholder="Key" />
-                    )}
-                  </Col>
-                  <Col style={{ marginTop: 8 }}>
-                    {getFieldDecorator(`value[${key}]`)(
-                      <Input placeholder="Value" />
-                    )}
-                  </Col>
-                  <Col style={{ marginTop: 8 }}>
-                    <Icon
-                      onClick={this.handleRemoveField.bind(this, key)}
-                      style={{ cursor: 'pointer' }}
-                      type="close"
-                      theme="outlined"
-                    />
-                  </Col>
-                </Row>
-              ))}
-
-              <Row style={{ marginTop: 8 }}>
-                <Button onClick={this.handleAddField}>
-                  <Trans>Add Param</Trans>
+                <Button type="primary" style={{ marginLeft: 8 }}>
+                  Remove
                 </Button>
-              </Row>
-            </div>
-
-            <div className={styles.result}>{result}</div>
-          </Col>
-        </Row>
+              </Popconfirm>
+            </Col>
+          </Row>
+        )}
+        <List {...listProps} />
+        {modalVisible && <Modal {...modalProps} />}
       </Page>
     )
   }
 }
 
-export default RequestPage
+Project.propTypes = {
+  user: PropTypes.object,
+  location: PropTypes.object,
+  dispatch: PropTypes.func,
+  loading: PropTypes.object,
+}
+
+export default Project

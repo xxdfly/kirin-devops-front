@@ -25,4 +25,9 @@ export default {
   createCode: 'POST /app/save',
   updateCode: 'POST /app/update',
   removeCode: 'POST /app/delete',
+
+  queryProjectList: 'POST /project/list',
+  createProject: 'POST /project/save',
+  updateProject: 'POST /project/update',
+  removeProject: 'POST /project/delete',
 }

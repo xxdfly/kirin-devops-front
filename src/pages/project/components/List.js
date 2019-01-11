@@ -44,41 +44,33 @@ class List extends PureComponent {
 
     const columns = [
       {
-        title: <Trans>AppName</Trans>,
-        dataIndex: 'appName',
-        key: 'appName',
-        // width: 72,
-        // fixed: 'left',
-        render: (text, record) => <Link to={`code/${record.id}`}>{text}</Link>,
+        title: <Trans>ProjectID</Trans>,
+        dataIndex:'id',
+        key:'id',
       },
       {
-        title: <Trans>AppType</Trans>,
-        dataIndex: 'appType',
-        key: 'appType',
+        title: <Trans>Project Name</Trans>,
+        dataIndex: 'projectName',
+        key: 'projectName',
+        render: (text, record) => <Link to={`project/${record.id}`}>{text}</Link>,
       },
       {
-        title: <Trans>CsvType</Trans>,
-        dataIndex: 'csvType',
-        key: 'csvType',
+        title: <Trans>Project Description</Trans>,
+        dataIndex: 'projectDesc',
+        key: 'projectDesc',
       },
       {
-        title: <Trans>Path</Trans>,
-        dataIndex: 'path',
-        key: 'path',
+        title: <Trans>Project Type</Trans>,
+        dataIndex: 'projectType',
+        key: 'projectType',
       },
       {
-        title: <Trans>CodeType</Trans>,
-        dataIndex: 'codeType',
-        key: 'codeType',
-        // render: text => <span>{text ? 'Male' : 'Female'}</span>,
+        title: <Trans>Create Time</Trans>,
+        dataIndex: 'gmtCreate',
+        key: 'gmtCreate',
       },
       {
-        title: <Trans>Config</Trans>,
-        dataIndex: 'config',
-        key: 'config',
-      },
-      {
-        title: <Trans>DevType</Trans>,
+        title: <Trans>Plan Deploy Time</Trans>,
         dataIndex: 'devType',
         key: 'devType',
       },
@@ -88,9 +80,9 @@ class List extends PureComponent {
         key: 'creator',
       },
       {
-        title: <Trans>LastOperator</Trans>,
-        dataIndex: 'lastOperator',
-        key: 'lastOperator',
+        title: <Trans>Project Status</Trans>,
+        dataIndex: 'projectStatus',
+        key: 'projectStatus',
       },
       {
         title: <Trans>Operation</Trans>,
@@ -98,7 +90,7 @@ class List extends PureComponent {
         // fixed: 'right',
         render: (text, record) => (
           <span>
-           <a onClick={() => this.handleUpdateClick(record)}><Trans>Modify</Trans></a>
+            <a onClick={() => this.handleUpdateClick(record)}><Trans>Modify</Trans></a>
             <Divider type="vertical" />
             <a onClick={() => this.handleDeleteClick(record)}><Trans>Delete</Trans></a>
           </span>

@@ -65,5 +65,14 @@
   "LastOperator":"最后修改人",
   "Create Code":"创建代码模块",
   "Update Code":"修改代码模块",
-  "Pick an develop Type":"选择一个开发模式"
+  "Pick an develop Type":"选择一个开发模式",
+  "ProjectID":"项目ID",
+  "Project Name":"项目名称",
+  "Project Description":"项目描述",
+  "Project Type":"项目类型",
+  "Create Time":"创建时间",
+  "Plan Deploy Time":"计划发布时间",
+  "Project Status":"项目状态",
+  "Modify":"修改",
+  "Apply For Test":"申请测试流程"
 }

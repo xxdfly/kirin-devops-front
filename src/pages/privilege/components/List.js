@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react'
 import PropTypes from 'prop-types'
-import { Table, Modal, Divider  } from 'antd'
-import { withI18n } from '@lingui/react'
+import { Table, Modal, Divider } from 'antd'
+import { Trans, withI18n } from '@lingui/react'
 import styles from './List.less'
 
 const { confirm } = Modal
@@ -55,9 +55,9 @@ class List extends PureComponent {
       key: 'action',
       render: (text, record) => (
         <span>
-          <a onClick={() => this.handleUpdateClick(record)}>修改</a>
+          <a onClick={() => this.handleUpdateClick(record)}><Trans>Modify</Trans></a>
           <Divider type="vertical" />
-          <a onClick={() => this.handleDeleteClick(record)}>删除</a>
+          <a onClick={() => this.handleDeleteClick(record)}><Trans>Delete</Trans></a>
         </span>
       ),
     }];
