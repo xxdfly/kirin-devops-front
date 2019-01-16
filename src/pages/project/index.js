@@ -42,7 +42,7 @@ class Project extends PureComponent {
       item: modalType === 'create' ? {} : currentItem,
       visible: modalVisible,
       maskClosable: false,
-      confirmLoading: loading.effects[`code/${modalType}`],
+      confirmLoading: loading.effects[`project/${modalType}`],
       title: `${
         modalType === 'create' ? i18n.t`Create Project` : i18n.t`Update Project`
       }`,

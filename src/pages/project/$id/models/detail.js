@@ -22,12 +22,14 @@ export default {
   effects: {
     *query({ payload }, { call, put }) {
       const data = yield call(queryProject, payload)
-      const { success, message, status, ...other } = data
+      console.log(respData)
+      const { success, message, status, respData, ...other } = data
       if (success) {
         yield put({
           type: 'querySuccess',
           payload: {
-            data: other,
+            data: respData,
+            other: other,
           },
         })
       } else {
@@ -38,10 +40,11 @@ export default {
 
   reducers: {
     querySuccess(state, { payload }) {
-      const { data } = payload
+      const { data, other } = payload
       return {
         ...state,
         data,
+        other,
       }
     },
   },

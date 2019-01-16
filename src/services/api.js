@@ -30,4 +30,5 @@ export default {
   createProject: 'POST /project/save',
   updateProject: 'POST /project/update',
   removeProject: 'POST /project/delete',
+  queryProject: '/project/:id',
 }
