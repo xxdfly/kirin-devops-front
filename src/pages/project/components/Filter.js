@@ -99,7 +99,7 @@ class Filter extends PureComponent {
               >
                 <Trans>Search</Trans>
               </Button>
-              <Button type="ghost" onClick={onAdd}>
+              <Button type="ghost" href="project/create">
                 <Trans>Create</Trans>
               </Button>
             </div>

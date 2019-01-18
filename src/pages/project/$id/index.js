@@ -57,6 +57,10 @@ class ProjectDetail extends PureComponent {
     };
   }
 
+  applyForBranch(){
+
+  }
+
   next() {
     const current = this.state.current + 1;
     this.setState({ current });
@@ -154,9 +158,8 @@ class ProjectDetail extends PureComponent {
                 renderItem={item => (
                   <List.Item>
                     <List.Item.Meta
-                      title={<a href="https://ant.design">{item.title}</a>}
-                      size={"middle"}
-                      description="Ant Design, a design language for background applications, is refined by Ant UED Team"
+                      title={<a href={"http://localhost:7000/code/"+item.appId}>{item.appName}</a>}
+                      description={item.branchUrl}
                     />
                   </List.Item>
                 )}

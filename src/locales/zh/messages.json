@@ -74,5 +74,8 @@
   "Plan Deploy Time":"计划发布时间",
   "Project Status":"项目状态",
   "Modify":"修改",
-  "Apply For Test":"申请测试流程"
+  "Apply For Test":"申请测试流程, 需要测试响应项目流程",
+  "Create Project":"创建项目",
+  "Requirement Description":"需求描述",
+  "Submit Create":"提交创建"
 }
