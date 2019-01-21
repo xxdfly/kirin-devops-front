@@ -1,6 +1,6 @@
 /* global window */
 import modelExtend from 'dva-model-extend'
-import { pathMatchRegexp } from 'utils'
+import { router, pathMatchRegexp } from 'utils'
 import {
   removeUserList,
   queryProjectList,
@@ -81,6 +81,19 @@ export default modelExtend(pageModel, {
       const data = yield call(createProject, payload)
       if (data.success) {
         yield put({ type: 'hideModal' })
+      } else {
+        throw data
+      }
+    },
+
+    *createProject({ payload }, { call, put }) {
+      const data = yield call(createProject, payload)
+      if (data.success) {
+        if(data.code === 1){
+          router.push('/project/'+data.respData.id)
+        }else{
+          alert(data.msg)
+        }
       } else {
         throw data
       }

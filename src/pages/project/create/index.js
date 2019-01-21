@@ -1,6 +1,7 @@
 /* global document */
 import React, { PureComponent } from 'react'
 import PropTypes from 'prop-types'
+import { connect } from 'dva'
 import moment from 'moment'
 import { Trans, withI18n } from '@lingui/react'
 import { Form, Button, Input, Card, DatePicker, Checkbox, Select } from 'antd'
@@ -19,6 +20,7 @@ const formItemLayout = {
 
 @withI18n()
 @Form.create()
+@connect(({ loading }) => ({ loading }))
 class CreateProject extends PureComponent {
 
   handleFields = fields => {
@@ -50,6 +52,19 @@ class CreateProject extends PureComponent {
         pathname:project/data.id
       })
     })
+  }
+
+  handleCreate = (e) => {
+    const { dispatch } = this.props
+    e.preventDefault();
+    this.props.form.validateFields((err, values) => {
+      console.log('Received values of form: ', values);
+      if(!err){
+        dispatch({
+          type: 'project/createProject',
+          payload: values,
+        })}
+    });
   }
 
   render() {
@@ -130,7 +145,7 @@ class CreateProject extends PureComponent {
                       style={{marginLeft:'64.5%'}}
                       type="primary"
                       htmlType="submit"
-                      onClick={this.createProject}
+                      onClick={this.handleCreate}
                       >
                       <Trans>Submit Create</Trans>
                     </Button>
@@ -142,6 +157,7 @@ class CreateProject extends PureComponent {
   }
 }
 
+//对Component设置propTypes属性，可以为Component的props属性进行类型检查。
 CreateProject.propTypes = {
   onAdd: PropTypes.func,
   form: PropTypes.object,

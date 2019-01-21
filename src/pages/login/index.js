@@ -10,6 +10,9 @@ import config from 'utils/config'
 import styles from './index.less'
 const FormItem = Form.Item
 
+
+//connect的作用是将组件和models结合在一起。
+//将models中的state绑定到组件的props中。并提供一些额外的功能，譬如dispatch
 @withI18n()
 @connect(({ loading }) => ({ loading }))
 @Form.create()
