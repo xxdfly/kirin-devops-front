@@ -7,6 +7,7 @@ export default {
   state: {
     data: {},
     applyForAppModalVisible: false,
+    createBranchModalVisible: false,
     appList: {}
   },
 
@@ -62,6 +63,14 @@ export default {
 
     hideApplyForAppModal(state) {
       return { ...state, applyForAppModalVisible: false }
+    },
+
+    showCreateBranchModal(state, { payload }) {
+      return { ...state, ...payload, createBranchModalVisible: true }
+    },
+
+    hideCreateBranchModal(state) {
+      return { ...state, createBranchModalVisible: false }
     },
 
   },

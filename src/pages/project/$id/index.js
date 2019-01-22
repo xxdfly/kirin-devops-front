@@ -2,9 +2,9 @@ import React, { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'dva'
 import { Row, Col, Card, Steps, Icon, Button, message, List } from 'antd'
-import { Color } from 'utils'
 import { Page } from 'components'
 import ApplyForAppModal from './components/ApplyForAppModal'
+import CreateBranchModal from './components/CreateBranchModal'
 import styles from './index.less'
 
 const Step = Steps.Step;
@@ -33,6 +33,8 @@ class ProjectDetail extends PureComponent {
     super(props);
     this.state = {
       current: 0,
+      projectId:-1,
+      selectedAppList:[]
     };
   }
 
@@ -52,7 +54,7 @@ class ProjectDetail extends PureComponent {
   render() {
     const { current } = this.state;
     const { projectDetail, dispatch } = this.props
-    const { data, applyForAppModalVisible, appList } = projectDetail
+    const { data, applyForAppModalVisible, appList, createBranchModalVisible } = projectDetail
     const content = []
     for (let key in data) {
       if ({}.hasOwnProperty.call(data, key)) {
@@ -78,17 +80,19 @@ class ProjectDetail extends PureComponent {
       scmProjectParticipantInfoList,
     } = data
 
-
     const applyForAppModalProps = {
       visible: applyForAppModalVisible,
       maskClosable: false,
       // confirmLoading: loading.effects[`project/applyForApp`],
       wrapClassName: 'vertical-center-modal',
       appList:appList,
-      onOk(data) {
-        console.log(data)
+      onOk:(data)=> {
+        this.setState({selectedAppList:data,projectId:this.props.projectDetail.data.id})
         dispatch({
           type: 'projectDetail/hideApplyForAppModal',
+        })
+        dispatch({
+          type: 'projectDetail/showCreateBranchModal',
         })
       },
       onCancel() {
@@ -96,6 +100,22 @@ class ProjectDetail extends PureComponent {
           type: 'projectDetail/hideApplyForAppModal',
         })
       },
+    }
+
+    const createBranchModalProps = {
+      visible: createBranchModalVisible,
+      maskClosable: false,
+      wrapClassName: 'vertical-center-modal',
+      selectedAppList:this.state.selectedAppList,
+      projectId:this.state.projectId,
+      onOk(data){
+        console.log(data)
+      },
+      onCancel(){
+        dispatch({
+          type: 'projectDetail/hideCreateBranchModal',
+        })
+      }
     }
 
     const showApplyForApp = () => {
@@ -206,6 +226,7 @@ class ProjectDetail extends PureComponent {
           </Col>
         </Row>
         {applyForAppModalVisible && <ApplyForAppModal {...applyForAppModalProps} />}
+        {createBranchModalVisible && <CreateBranchModal {...createBranchModalProps} />}
       </Page>
     )
   }
