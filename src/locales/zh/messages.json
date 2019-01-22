@@ -77,5 +77,7 @@
   "Apply For Test":"申请测试流程, 需要测试响应项目流程",
   "Create Project":"创建项目",
   "Requirement Description":"需求描述",
-  "Submit Create":"提交创建"
+  "Submit Create":"提交创建",
+  "Application List":"可申请应用列表",
+  "Please Input The App Name You Will Develop":"请输入你要开发的应用名称"
 }

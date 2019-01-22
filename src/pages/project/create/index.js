@@ -6,7 +6,6 @@ import moment from 'moment'
 import { Trans, withI18n } from '@lingui/react'
 import { Form, Button, Input, Card, DatePicker, Checkbox, Select } from 'antd'
 import { Page } from 'components'
-import { router } from 'utils'
 
 const FormItem = Form.Item
 const { TextArea } = Input
@@ -40,18 +39,6 @@ class CreateProject extends PureComponent {
     let fields = getFieldsValue()
     fields[key] = values
     fields = this.handleFields(fields)
-  }
-
-  createProject = (data) => {
-    console.log(data)
-    dispatch({
-      type: 'project/create',
-      payload: data,
-    }).then((data) => {
-      router.push({
-        pathname:project/data.id
-      })
-    })
   }
 
   handleCreate = (e) => {

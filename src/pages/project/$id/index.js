@@ -4,14 +4,8 @@ import { connect } from 'dva'
 import { Row, Col, Card, Steps, Icon, Button, message, List } from 'antd'
 import { Color } from 'utils'
 import { Page } from 'components'
+import ApplyForAppModal from './components/ApplyForAppModal'
 import styles from './index.less'
-
-const bodyStyle = {
-  bodyStyle: {
-    height: 432,
-    background: '#fff',
-  },
-}
 
 const Step = Steps.Step;
 
@@ -32,21 +26,6 @@ const steps = [{
   content: 'Last-content',
   icon:<Icon type="poweroff" />,
 }];
-
-const projectDemoData = [
-  {
-    title: 'Ant Design Title 1',
-  },
-  {
-    title: 'Ant Design Title 2',
-  },
-  {
-    title: 'Ant Design Title 3',
-  },
-  {
-    title: 'Ant Design Title 4',
-  },
-];
 
 @connect(({ projectDetail }) => ({ projectDetail }))
 class ProjectDetail extends PureComponent {
@@ -72,8 +51,8 @@ class ProjectDetail extends PureComponent {
   }
   render() {
     const { current } = this.state;
-    const { projectDetail } = this.props
-    const { data } = projectDetail
+    const { projectDetail, dispatch } = this.props
+    const { data, applyForAppModalVisible, appList } = projectDetail
     const content = []
     for (let key in data) {
       if ({}.hasOwnProperty.call(data, key)) {
@@ -85,8 +64,6 @@ class ProjectDetail extends PureComponent {
         )
       }
     }
-
-    console.log(data)
 
     const {
       projectName,
@@ -102,6 +79,30 @@ class ProjectDetail extends PureComponent {
     } = data
 
 
+    const applyForAppModalProps = {
+      visible: applyForAppModalVisible,
+      maskClosable: false,
+      // confirmLoading: loading.effects[`project/applyForApp`],
+      wrapClassName: 'vertical-center-modal',
+      appList:appList,
+      onOk(data) {
+        console.log(data)
+        dispatch({
+          type: 'projectDetail/hideApplyForAppModal',
+        })
+      },
+      onCancel() {
+        dispatch({
+          type: 'projectDetail/hideApplyForAppModal',
+        })
+      },
+    }
+
+    const showApplyForApp = () => {
+      dispatch({
+        type: 'projectDetail/showApplyForAppModal'
+      })
+    }
 
     let PM = ""
     if(scmProjectParticipantInfoList){
@@ -132,7 +133,7 @@ class ProjectDetail extends PureComponent {
               </Steps>
               <div className="steps-action" align="right">
                 {
-                  <Button type="primary" style={{marginRight: 10,marginTop: 10}} onClick={() => this.next()}>申请变更</Button>
+                  <Button type="primary" style={{marginRight: 10,marginTop: 10}} onClick={showApplyForApp}>申请变更</Button>
                 }
                 {
                   current < steps.length - 1
@@ -148,8 +149,6 @@ class ProjectDetail extends PureComponent {
                   </Button>
                 }
               </div>
-
-              {/* <div style="marginTop=20px"/> */}
               <List
                 itemLayout="horizontal"
                 size="large"
@@ -206,6 +205,7 @@ class ProjectDetail extends PureComponent {
             </Row>
           </Col>
         </Row>
+        {applyForAppModalVisible && <ApplyForAppModal {...applyForAppModalProps} />}
       </Page>
     )
   }

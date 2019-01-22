@@ -23,6 +23,7 @@ class Project extends PureComponent {
       modalVisible,
       modalType,
       selectedRowKeys,
+      applyForAppModalVisible,
     } = project
 
     const handleRefresh = newQuery => {

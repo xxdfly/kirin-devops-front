@@ -15,6 +15,7 @@ export default modelExtend(pageModel, {
 
   state: {
     currentItem: {},
+    applyForAppModalVisible: false,
     modalVisible: false,
     modalType: 'create',
     selectedRowKeys: [],
@@ -119,5 +120,5 @@ export default modelExtend(pageModel, {
     hideModal(state) {
       return { ...state, modalVisible: false }
     },
-  },
+  }
 })

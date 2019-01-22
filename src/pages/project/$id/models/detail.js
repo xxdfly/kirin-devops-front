@@ -1,11 +1,13 @@
 import { pathMatchRegexp } from 'utils'
-import { queryProject } from 'api'
+import { queryProject, queryCodeList } from 'api'
 
 export default {
   namespace: 'projectDetail',
 
   state: {
     data: {},
+    applyForAppModalVisible: false,
+    appList: {}
   },
 
   subscriptions: {
@@ -22,30 +24,45 @@ export default {
   effects: {
     *query({ payload }, { call, put }) {
       const data = yield call(queryProject, payload)
-      console.log(respData)
-      const { success, message, status, respData, ...other } = data
+      const { success, respData } = data
       if (success) {
-        yield put({
-          type: 'querySuccess',
-          payload: {
-            data: respData,
-            other: other,
-          },
-        })
-      } else {
-        throw data
+        const appData = yield call(queryCodeList)
+        const { success, message, status, respList, ...other } = appData
+        if (success) {
+          yield put({
+            type: 'querySuccess',
+            payload: {
+              data: respData,
+              appList: respList,
+              other: other,
+            },
+          })
+        } else {
+          throw data
+        }
       }
-    },
+    }
   },
 
   reducers: {
     querySuccess(state, { payload }) {
-      const { data, other } = payload
+      const { data, appList, other } = payload
       return {
         ...state,
         data,
+        appList,
         other,
       }
     },
+
+
+    showApplyForAppModal(state, { payload }) {
+      return { ...state, ...payload, applyForAppModalVisible: true }
+    },
+
+    hideApplyForAppModal(state) {
+      return { ...state, applyForAppModalVisible: false }
+    },
+
   },
 }
