@@ -101,6 +101,7 @@ class List extends PureComponent {
     return (
       <Table
         {...tableProps}
+        // showHeader={false}
         pagination={{
           ...tableProps.pagination,
           showTotal: total => i18n.t`Total ${total} Items`,

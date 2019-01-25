@@ -1,5 +1,6 @@
 import { pathMatchRegexp } from 'utils'
-import { queryProject, queryCodeList } from 'api'
+import { cloneDeep } from 'lodash'
+import { queryProject, queryCodeList, createParticipant, deleteParticipant } from 'api'
 
 export default {
   namespace: 'projectDetail',
@@ -8,7 +9,9 @@ export default {
     data: {},
     applyForAppModalVisible: false,
     createBranchModalVisible: false,
-    appList: {}
+    participantModalVisible: false,
+    appList: {},
+    participantList:[]
   },
 
   subscriptions: {
@@ -35,6 +38,7 @@ export default {
             payload: {
               data: respData,
               appList: respList,
+              participantList: respData.scmProjectParticipantInfoList,
               other: other,
             },
           })
@@ -42,20 +46,71 @@ export default {
           throw data
         }
       }
-    }
+    },
+
+    *addParticipant({ payload }, { call, select, put }) {
+      const data = yield call(createParticipant, payload)
+      const { success, respData } = data
+      if (success) {
+        if(data.code === 1){
+          const details = yield select(_ => _.projectDetail)
+          let participantList = cloneDeep(details.participantList)
+          participantList.push(respData)
+          yield put({
+            type: 'updateParticipantList',
+            payload: {
+              participantList
+            }
+          })
+        }
+      } else {
+        console.log(data)
+        throw data
+      }
+    },
+
+    *deleteParticipant({ payload }, { call, select, put }) {
+      const data = yield call(deleteParticipant, payload)
+      const { success, respData } = data
+      if (success) {
+        if(data.code === 1){
+          const details = yield select(_ => _.projectDetail)
+          let participantList = []
+          details.participantList.map(item=>{
+            if(item.id!==payload){
+              participantList.push(item)
+            }
+          })
+          yield put({
+            type: 'updateParticipantList',
+            payload: {
+              participantList
+            }
+          })
+        }
+      } else {
+        console.log(respData)
+        throw data
+      }
+    },
   },
 
   reducers: {
     querySuccess(state, { payload }) {
-      const { data, appList, other } = payload
+      const { data, appList, participantList, other } = payload
       return {
         ...state,
         data,
         appList,
+        participantList:participantList,
         other,
       }
     },
 
+    updateParticipantList(state, { payload }) {
+      const { participantList } = payload
+      return { ...state, participantList: participantList }
+    },
 
     showApplyForAppModal(state, { payload }) {
       return { ...state, ...payload, applyForAppModalVisible: true }
@@ -71,6 +126,14 @@ export default {
 
     hideCreateBranchModal(state) {
       return { ...state, createBranchModalVisible: false }
+    },
+
+    showParticipantModal(state, { payload }) {
+      return { ...state, ...payload, participantModalVisible: true }
+    },
+
+    hideParticipantModal(state) {
+      return { ...state, participantModalVisible: false }
     },
 
   },

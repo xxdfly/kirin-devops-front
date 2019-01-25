@@ -78,6 +78,7 @@ export default {
 
         if ( code===1 && respData ) {
           const { respList } = yield call(queryRouteList)
+          const { user } = respData
           // const { permissions } = user
           let routeList = respList
           // if (
@@ -102,7 +103,7 @@ export default {
           yield put({
             type: 'updateState',
             payload: {
-              // user,
+              user,
               // permissions,
               routeList,
             },

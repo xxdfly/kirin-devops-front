@@ -27,10 +27,11 @@ const bodyStyle = {
 
 @connect(({ app, dashboard, loading }) => ({
   avatar: app.user.avatar,
-  username: app.user.username,
+  username: app.user.name,
   dashboard,
   loading,
 }))
+
 class Dashboard extends PureComponent {
   render() {
     const { avatar, username, dashboard, loading } = this.props

@@ -81,5 +81,10 @@
   "Application List":"可申请应用列表",
   "Please Input The App Name You Will Develop":"请输入你要开发的应用名称",
   "Please Choose Application Branch Name":"请填写应用分支名",
-  "Branch Address":"分支地址"
+  "Branch Address":"分支地址",
+  "Participants Manage":"项目成员管理",
+  "Developer":"开发",
+  "Test":"测试",
+  "SCM":"配管",
+  "PM":"PM"
 }

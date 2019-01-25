@@ -7,6 +7,7 @@ import {
   createProject,
   updateProject,
   removeProject,
+  createProjectApp,
 } from 'api'
 import { pageModel } from 'utils/model'
 
@@ -38,7 +39,6 @@ export default modelExtend(pageModel, {
   effects: {
     *query({ payload = {} }, { call, put }) {
       const data = yield call(queryProjectList, payload)
-      console.log(data)
       if (data) {
         yield put({
           type: 'querySuccess',
@@ -110,6 +110,16 @@ export default modelExtend(pageModel, {
         throw data
       }
     },
+
+    *createProjectApp({ payload }, { call}){
+      const data = yield call(createProjectApp, payload)
+      if (data.success) {
+        console.log(data)
+      } else {
+        console.log(data)
+        throw data
+      }
+    }
   },
 
   reducers: {
