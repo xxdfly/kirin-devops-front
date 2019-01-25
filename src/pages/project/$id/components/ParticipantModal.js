@@ -1,9 +1,13 @@
 import React, { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'dva'
-import { Form, Input, Modal, Tag, Tooltip, Icon, Button, Divider } from 'antd'
+import { Form, Input, Modal, Tag, Tooltip, Button, Divider, AutoComplete } from 'antd'
 import { Trans, withI18n } from '@lingui/react'
 import styles from './ParticipantModal.less'
+
+
+const InputGroup = Input.Group;
+const Option = AutoComplete.Option;
 
 @connect(({ app }) => ({
   userName: app.user.username,
@@ -25,18 +29,12 @@ class ParticipantModal extends PureComponent {
     onOk()
   }
 
-  searchAppName = (event) => {
-    let resultList = []
-    this.props.appList.map(item =>{
-      if(item.appName.indexOf(event.target.value) >= 0){
-        resultList.push(item)
-      }
+  searchAppName = (value) => {
+    const { dispatch } = this.props
+    dispatch({
+      type: 'projectDetail/queryParticipant',
+      payload: { name: value }
     })
-    this.setState({
-      dataSource: resultList,
-      selectedRows:[]
-    });
-    this.clearSelectedRows()
   }
 
   deleteParticipant = (item) => {
@@ -48,8 +46,15 @@ class ParticipantModal extends PureComponent {
   }
 
 
-  addParticipantSelf = (participantType) =>{
+  addParticipantSelf = (participantType) => {
     const { userName, extraName } = this.state
+    this.insertParticipant(userName, extraName, participantType)
+  }
+
+  addSearchedParticipant = (value, participantType) => {
+    console.log(value)
+    const userName = value.split(":")[0]
+    const extraName = value.split(":")[1]
     this.insertParticipant(userName, extraName, participantType)
   }
 
@@ -73,20 +78,33 @@ class ParticipantModal extends PureComponent {
   }
 
   render() {
-    const { participantList, ...modalProps } = this.props
+    const { participantList, searchedParticipantList, ...modalProps } = this.props
     let developerList = []
     let testList = []
     let scmList = []
+    let fuzzyOptions = []
 
-    participantList.map(item=>{
-      if(item.role === "开发"){
-        developerList.push(item)
-      }else if(item.role === "测试"){
-        testList.push(item)
-      }else if(item.role === "配管"){
-        scmList.push(item)
-      }
-    })
+    if(participantList){
+      participantList.map(item=>{
+        if(item.role === "开发"){
+          developerList.push(item)
+        }else if(item.role === "测试"){
+          testList.push(item)
+        }else if(item.role === "配管"){
+          scmList.push(item)
+        }
+      })
+    }
+
+    if(searchedParticipantList){
+      searchedParticipantList.map(item => {
+        // let option = (<Option key={item.id+""} value={item.username+":"+item.name}>
+        //   <span>{item.name}</span>
+        //   <span style={{float:'right'}}>{item.email}</span>
+        // </Option>)
+        fuzzyOptions.push(item)
+      })
+    }
 
     return (
       <Modal
@@ -113,11 +131,15 @@ class ParticipantModal extends PureComponent {
               })}
             </div>
           </div>
-          <Input
-            placeholder={"Please Input The App Name You Will Develop"}
-            onChange={this.searchAppName}
-            style={{marginTop:5}}
-          />
+          <InputGroup compact>
+              <AutoComplete
+                placeholder={"Please Input The User Name You Will Add"}
+                dataSource={fuzzyOptions}
+                onChange={this.searchAppName}
+                onSelect={(value)=>this.addSearchedParticipant(value,"开发")}
+                style={{marginTop:5,width:'100%'}}
+              />
+          </InputGroup>
           <div style={{marginTop:'10px'}}>
             <div>
               <Trans>Test</Trans>

@@ -61,7 +61,15 @@ class ProjectDetail extends PureComponent {
   render() {
     const { current } = this.state;
     const { projectDetail, dispatch } = this.props
-    const { data, applyForAppModalVisible, appList, createBranchModalVisible, participantModalVisible, participantList } = projectDetail
+    const {
+      data,
+      applyForAppModalVisible,
+      appList,
+      createBranchModalVisible,
+      participantModalVisible,
+      participantList,
+      searchedParticipantList
+    } = projectDetail
     const content = []
     for (let key in data) {
       if ({}.hasOwnProperty.call(data, key)) {
@@ -188,6 +196,7 @@ class ProjectDetail extends PureComponent {
       maskClosable: false,
       wrapClassName: 'vertical-center-modal',
       participantList: participantList,
+      searchedParticipantList:searchedParticipantList,
       projectId:id,
       addParticipant(data){
         dispatch({

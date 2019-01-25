@@ -1,6 +1,12 @@
 import { pathMatchRegexp } from 'utils'
 import { cloneDeep } from 'lodash'
-import { queryProject, queryCodeList, createParticipant, deleteParticipant } from 'api'
+import {
+  queryProject,
+  queryCodeList,
+  createParticipant,
+  deleteParticipant,
+  fuzzyUser
+} from 'api'
 
 export default {
   namespace: 'projectDetail',
@@ -11,7 +17,8 @@ export default {
     createBranchModalVisible: false,
     participantModalVisible: false,
     appList: {},
-    participantList:[]
+    participantList:[],
+    searchedParticipantList:[]
   },
 
   subscriptions: {
@@ -93,6 +100,36 @@ export default {
         throw data
       }
     },
+
+    *queryParticipant({ payload }, { call, select, put }) {
+      const data = yield call(fuzzyUser, payload)
+      const { success, respData } = data
+      if (success) {
+        if(data.code === 1){
+          const { users } = respData
+          let searchedParticipantList = []
+          if(users){
+            users.map(item => {
+              let user = {}
+              Object.assign(user,{
+                key:item.userId+"",
+                value:item.username+":"+item.name+":"+item.email
+              })
+              searchedParticipantList.push(user)
+            })
+          }
+          yield put({
+            type: 'updateFuzzyParticipantList',
+            payload: {
+              searchedParticipantList: searchedParticipantList
+            }
+          })
+        }
+      } else {
+        console.log(respData)
+        throw data
+      }
+    },
   },
 
   reducers: {
@@ -105,6 +142,11 @@ export default {
         participantList:participantList,
         other,
       }
+    },
+
+    updateFuzzyParticipantList(state, { payload }){
+      const { searchedParticipantList } = payload
+      return { ...state, searchedParticipantList: searchedParticipantList}
     },
 
     updateParticipantList(state, { payload }) {

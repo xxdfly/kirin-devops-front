@@ -6,6 +6,7 @@ export default {
   loginUser: 'POST /user/login',
 
   queryUser: '/user/:id',
+  fuzzyUser: '/user/fuzzy/:name',
   queryUserList: '/users',
   updateUser: 'Patch /user/:id',
   createUser: 'POST /user',
