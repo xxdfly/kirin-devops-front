@@ -54,7 +54,6 @@ class ParticipantModal extends PureComponent {
         payload: { name: value, type: type }
       })
     }
-
   }
 
   deleteParticipant = (item) => {
@@ -123,9 +122,54 @@ class ParticipantModal extends PureComponent {
     return list
   }
 
+  labelRender(label){
+    switch(label){
+      case "Developer":
+        return <Trans>Developer</Trans>
+      case "Test":
+        return <Trans>Test</Trans>
+      case "SCM":
+        return <Trans>SCM</Trans>
+    }
+  }
+
   render() {
     const { participantList, searchedDevParticipantList, searchedTestParticipantList, searchedScmParticipantList, ...modalProps } = this.props
     let { fuzzyDevSearched, fuzzyTestSearched, fuzzyScmSearched } = this.state
+
+    const participantInfoGenerator = (zhType,type,fuzzyValue,fuzzyList,i18Label) =>{
+      return(
+        <div>
+          <div>
+            {this.labelRender(i18Label)}
+            <Button size="small" style={{float:'right'}} onClick={()=>this.addParticipantSelf(zhType)}>添加自己</Button>
+          </div>
+          <Divider className={styles.customDivider} style={{margin:'10px 0'}}/>
+          <div>
+            {this.participantListGenerator(participantList,zhType).map((tag) => {
+              const isLongTag = tag.extraName.length > 20;
+              const tagElem = (
+                <Tag style={{fontSize:'initial'}} color="#2db7f5" key={tag.id} closable="true" afterClose={() => this.deleteParticipant(tag)}>
+                  {isLongTag ? `${tag.extraName.slice(0, 20)}...` : tag.extraName}
+                </Tag>
+              );
+              return isLongTag ? <Tooltip title={tag.extraName} key={tag.id}>{tagElem}</Tooltip> :tagElem
+            })}
+          </div>
+          <InputGroup>
+            <AutoComplete
+              placeholder={"Please Input The User Name You Will Add"}
+              onSearch={(value)=>this.searchAppName(value,type)}
+              value={fuzzyValue}
+              onSelect={(value)=>this.addSearchedParticipant(value, zhType, type)}
+              style={{marginTop:5,width:'100%'}}
+            >
+              {this.fuzzyOptionsRender(fuzzyList)}
+            </AutoComplete>
+          </InputGroup>
+        </div>
+      )
+    }
 
     return (
       <Modal
@@ -133,93 +177,9 @@ class ParticipantModal extends PureComponent {
         title={<Trans>Participants Manage</Trans>}
         className={styles.customHeader}
       >
-          <div>
-            <div>
-              <Trans>Developer</Trans>
-              <Button size="small" style={{float:'right'}} onClick={()=>this.addParticipantSelf("开发")}>添加自己</Button>
-            </div>
-            <Divider className={styles.customDivider} style={{margin:'10px 0'}}/>
-            <div>
-              {this.participantListGenerator(participantList,"开发").map((tag) => {
-                const isLongTag = tag.extraName.length > 20;
-                const tagElem = (
-                  <Tag style={{fontSize:'initial'}} color="#2db7f5" key={tag.id} closable="true" afterClose={() => this.deleteParticipant(tag)}>
-                    {isLongTag ? `${tag.extraName.slice(0, 20)}...` : tag.extraName}
-                  </Tag>
-                );
-                return isLongTag ? <Tooltip title={tag.extraName} key={tag.id}>{tagElem}</Tooltip> :tagElem
-              })}
-            </div>
-          </div>
-          <InputGroup>
-              <AutoComplete
-                placeholder={"Please Input The User Name You Will Add"}
-                onSearch={(value)=>this.searchAppName(value,'Dev')}
-                value={fuzzyDevSearched}
-                onSelect={(value)=>this.addSearchedParticipant(value,"开发",'Dev')}
-                style={{marginTop:5,width:'100%'}}
-              >
-                {this.fuzzyOptionsRender(searchedDevParticipantList)}
-              </AutoComplete>
-          </InputGroup>
-          <div style={{marginTop:'10px'}}>
-            <div>
-              <Trans>Test</Trans>
-              <Button size="small" style={{float:'right'}} onClick={()=>this.addParticipantSelf("测试")}>添加自己</Button>
-            </div>
-            <Divider className={styles.customDivider} style={{margin:'10px 0'}}/>
-            <div>
-              {this.participantListGenerator(participantList,"测试").map((tag) => {
-                const isLongTag = tag.extraName.length > 20;
-                const tagElem = (
-                  <Tag style={{fontSize:'initial'}} color="#2db7f5" key={tag.id} closable="true" afterClose={() => this.deleteParticipant(tag)}>
-                    {isLongTag ? `${tag.extraName.slice(0, 20)}...` : tag.extraName}
-                  </Tag>
-                );
-                return isLongTag ? <Tooltip title={tag.extraName} key={tag.id}>{tagElem}</Tooltip> :tagElem
-              })}
-            </div>
-            <InputGroup>
-              <AutoComplete
-                placeholder={"Please Input The User Name You Will Add"}
-                onSearch={(value)=>this.searchAppName(value,'Test')}
-                value={fuzzyTestSearched}
-                onSelect={(value)=>this.addSearchedParticipant(value,"测试",'Test')}
-                style={{marginTop:5,width:'100%'}}
-              >
-                {this.fuzzyOptionsRender(searchedTestParticipantList)}
-              </AutoComplete>
-            </InputGroup>
-          </div>
-          <div style={{marginTop:'10px'}}>
-            <div>
-              <Trans>SCM</Trans>
-              <Button size="small" style={{float:'right'}} onClick={()=>this.addParticipantSelf("配管")}>添加自己</Button>
-            </div>
-            <Divider className={styles.customDivider} style={{margin:'10px 0'}}/>
-            <div>
-              {this.participantListGenerator(participantList,"配管").map((tag) => {
-                const isLongTag = tag.extraName.length > 20;
-                const tagElem = (
-                  <Tag style={{fontSize:'initial'}} color="#2db7f5" key={tag.id} closable="true" afterClose={() => this.deleteParticipant(tag)}>
-                    {isLongTag ? `${tag.extraName.slice(0, 20)}...` : tag.extraName}
-                  </Tag>
-                );
-                return isLongTag ? <Tooltip title={tag.extraName} key={tag.id}>{tagElem}</Tooltip> :tagElem
-              })}
-            </div>
-          </div>
-          <InputGroup>
-              <AutoComplete
-                placeholder={"Please Input The User Name You Will Add"}
-                onSearch={(value)=>this.searchAppName(value,'Scm')}
-                value={fuzzyScmSearched}
-                onSelect={(value)=>this.addSearchedParticipant(value,"配管",'Scm')}
-                style={{marginTop:5,width:'100%'}}
-              >
-                {this.fuzzyOptionsRender(searchedScmParticipantList)}
-              </AutoComplete>
-          </InputGroup>
+          {participantInfoGenerator("开发","Dev",fuzzyDevSearched,searchedDevParticipantList,'Developer')}
+          {participantInfoGenerator("测试","Test",fuzzyTestSearched,searchedTestParticipantList,"Test")}
+          {participantInfoGenerator("配管","Scm",fuzzyScmSearched,searchedScmParticipantList,"SCM")}
       </Modal>
     )
   }
