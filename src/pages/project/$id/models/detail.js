@@ -13,12 +13,11 @@ export default {
 
   state: {
     data: {},
+    appList: {},
     applyForAppModalVisible: false,
     createBranchModalVisible: false,
     participantModalVisible: false,
-    appList: {},
     participantList:[],
-    searchedParticipantList:[]
   },
 
   subscriptions: {
@@ -66,7 +65,10 @@ export default {
           yield put({
             type: 'updateParticipantList',
             payload: {
-              participantList
+              participantList,
+              searchedDevParticipantList:[],
+              searchedTestParticipantList:[],
+              searchedScmParticipantList:[]
             }
           })
         }
@@ -101,35 +103,54 @@ export default {
       }
     },
 
-    *queryParticipant({ payload }, { call, select, put }) {
-      const data = yield call(fuzzyUser, payload)
+    *queryParticipant({ payload }, { call, put }) {
+      let searchedDevParticipantList=[]
+      let searchedTestParticipantList=[]
+      let searchedScmParticipantList=[]
+
+      const { type,name } = payload
+      const data = yield call(fuzzyUser, {name})
       const { success, respData } = data
       if (success) {
-        if(data.code === 1){
-          const { users } = respData
-          let searchedParticipantList = []
-          if(users){
-            users.map(item => {
-              let user = {}
-              Object.assign(user,{
-                key:item.userId+"",
-                value:item.username+":"+item.name+":"+item.email
+        if(data.code === 1) {
+          if(respData) {
+            const { users } = respData
+            if(users) {
+              users.map(item => {
+                let user = {}
+                Object.assign(user,{
+                  key:item.userId+"",
+                  value:item.username+":"+item.name+":"+item.email
+                })
+                switch(type){
+                    case 'Dev':
+                      searchedDevParticipantList.push(user)
+                      break
+                    case 'Test':
+                      searchedTestParticipantList.push(user)
+                      break
+                    case 'Scm':
+                      searchedScmParticipantList.push(user)
+                      break
+                }
               })
-              searchedParticipantList.push(user)
-            })
-          }
-          yield put({
-            type: 'updateFuzzyParticipantList',
-            payload: {
-              searchedParticipantList: searchedParticipantList
             }
-          })
+          }
+        } else {
+          console.log(respData)
+          throw data
         }
-      } else {
-        console.log(respData)
-        throw data
+        yield put({
+          type: 'updateFuzzyParticipantList',
+          payload: {
+            searchedDevParticipantList,
+            searchedTestParticipantList,
+            searchedScmParticipantList
+          }
+        })
       }
-    },
+    }
+
   },
 
   reducers: {
@@ -139,19 +160,17 @@ export default {
         ...state,
         data,
         appList,
-        participantList:participantList,
+        participantList,
         other,
       }
     },
 
     updateFuzzyParticipantList(state, { payload }){
-      const { searchedParticipantList } = payload
-      return { ...state, searchedParticipantList: searchedParticipantList}
+      return { ...state, ...payload }
     },
 
     updateParticipantList(state, { payload }) {
-      const { participantList } = payload
-      return { ...state, participantList: participantList }
+      return { ...state, ...payload }
     },
 
     showApplyForAppModal(state, { payload }) {
@@ -175,7 +194,22 @@ export default {
     },
 
     hideParticipantModal(state) {
-      return { ...state, participantModalVisible: false }
+      return {
+        ...state,
+        participantModalVisible: false,
+        searchedDevParticipantList:[],
+        searchedTestParticipantList:[],
+        searchedScmParticipantList:[]
+      }
+    },
+
+    clearParticipantModal(state){
+      return {
+        ...state,
+        searchedDevParticipantList:[],
+        searchedTestParticipantList:[],
+        searchedScmParticipantList:[]
+      }
     },
 
   },

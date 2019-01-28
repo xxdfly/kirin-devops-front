@@ -68,9 +68,12 @@ class ProjectDetail extends PureComponent {
       createBranchModalVisible,
       participantModalVisible,
       participantList,
-      searchedParticipantList
+      searchedDevParticipantList,
+      searchedTestParticipantList,
+      searchedScmParticipantList
     } = projectDetail
     const content = []
+
     for (let key in data) {
       if ({}.hasOwnProperty.call(data, key)) {
         content.push(
@@ -195,20 +198,12 @@ class ProjectDetail extends PureComponent {
       visible: participantModalVisible,
       maskClosable: false,
       wrapClassName: 'vertical-center-modal',
+      footer:null,
       participantList: participantList,
-      searchedParticipantList:searchedParticipantList,
+      searchedDevParticipantList:searchedDevParticipantList,
+      searchedTestParticipantList:searchedTestParticipantList,
+      searchedScmParticipantList:searchedScmParticipantList,
       projectId:id,
-      addParticipant(data){
-        dispatch({
-          type: 'projectDetail/addParticipant',
-          payload: data
-        })
-      },
-      onOk(){
-        dispatch({
-          type: 'projectDetail/hideParticipantModal',
-        })
-      },
       onCancel(){
         dispatch({
           type: 'projectDetail/hideParticipantModal',

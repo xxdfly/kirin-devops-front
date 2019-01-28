@@ -21,20 +21,40 @@ class ParticipantModal extends PureComponent {
   state = {
     participantList: this.props.participantList,
     userName: this.props.userName,
-    extraName: this.props.extraName
+    extraName: this.props.extraName,
+    fuzzyDevSearched:'',
+    fuzzyTestSearched:'',
+    fuzzyScmSearched:'',
   }
 
-  handleOk = () => {
-    const { onOk } = this.props
-    onOk()
+  handleSearchStatus = ( value, type) => {
+    switch(type){
+      case 'Dev':
+        this.setState({fuzzyDevSearched:value})
+        break
+      case 'Test':
+        this.setState({fuzzyTestSearched:value})
+        break
+      case 'Scm':
+        this.setState({fuzzyScmSearched:value})
+        break
+    }
   }
 
-  searchAppName = (value) => {
+  searchAppName = (value, type) => {
     const { dispatch } = this.props
-    dispatch({
-      type: 'projectDetail/queryParticipant',
-      payload: { name: value }
-    })
+    this.handleSearchStatus(value, type)
+    if(value===""){
+      dispatch({
+        type: 'projectDetail/clearParticipantModal'
+      })
+    }else{
+      dispatch({
+        type: 'projectDetail/queryParticipant',
+        payload: { name: value, type: type }
+      })
+    }
+
   }
 
   deleteParticipant = (item) => {
@@ -51,8 +71,8 @@ class ParticipantModal extends PureComponent {
     this.insertParticipant(userName, extraName, participantType)
   }
 
-  addSearchedParticipant = (value, participantType) => {
-    console.log(value)
+  addSearchedParticipant = (value, participantType, type) => {
+    this.handleSearchStatus('', type)
     const userName = value.split(":")[0]
     const extraName = value.split(":")[1]
     this.insertParticipant(userName, extraName, participantType)
@@ -77,39 +97,39 @@ class ParticipantModal extends PureComponent {
     })
   }
 
-  render() {
-    const { participantList, searchedParticipantList, ...modalProps } = this.props
-    let developerList = []
-    let testList = []
-    let scmList = []
-    let fuzzyOptions = []
+  fuzzyOptionsRender = ( fuzzyList ) => {
+    let options = []
+    if(fuzzyList){
+      fuzzyList.map(item => {
+        let option = (<Option key={item.key} value={item.value}>
+          <span>{item.value.split(":")[0]}</span>
+          <span style={{float:'right'}}>{item.value.split(":")[2]}</span>
+        </Option>)
+        options.push(option)
+      })
+    }
+    return options
+  }
 
+  participantListGenerator = ( participantList, type ) => {
+    let list = []
     if(participantList){
       participantList.map(item=>{
-        if(item.role === "开发"){
-          developerList.push(item)
-        }else if(item.role === "测试"){
-          testList.push(item)
-        }else if(item.role === "配管"){
-          scmList.push(item)
+        if(item.role === type){
+          list.push(item)
         }
       })
     }
+    return list
+  }
 
-    if(searchedParticipantList){
-      searchedParticipantList.map(item => {
-        // let option = (<Option key={item.id+""} value={item.username+":"+item.name}>
-        //   <span>{item.name}</span>
-        //   <span style={{float:'right'}}>{item.email}</span>
-        // </Option>)
-        fuzzyOptions.push(item)
-      })
-    }
+  render() {
+    const { participantList, searchedDevParticipantList, searchedTestParticipantList, searchedScmParticipantList, ...modalProps } = this.props
+    let { fuzzyDevSearched, fuzzyTestSearched, fuzzyScmSearched } = this.state
 
     return (
       <Modal
         {...modalProps}
-        onOk={this.handleOk}
         title={<Trans>Participants Manage</Trans>}
         className={styles.customHeader}
       >
@@ -120,7 +140,7 @@ class ParticipantModal extends PureComponent {
             </div>
             <Divider className={styles.customDivider} style={{margin:'10px 0'}}/>
             <div>
-              {developerList.map((tag) => {
+              {this.participantListGenerator(participantList,"开发").map((tag) => {
                 const isLongTag = tag.extraName.length > 20;
                 const tagElem = (
                   <Tag style={{fontSize:'initial'}} color="#2db7f5" key={tag.id} closable="true" afterClose={() => this.deleteParticipant(tag)}>
@@ -131,14 +151,16 @@ class ParticipantModal extends PureComponent {
               })}
             </div>
           </div>
-          <InputGroup compact>
+          <InputGroup>
               <AutoComplete
                 placeholder={"Please Input The User Name You Will Add"}
-                dataSource={fuzzyOptions}
-                onChange={this.searchAppName}
-                onSelect={(value)=>this.addSearchedParticipant(value,"开发")}
+                onSearch={(value)=>this.searchAppName(value,'Dev')}
+                value={fuzzyDevSearched}
+                onSelect={(value)=>this.addSearchedParticipant(value,"开发",'Dev')}
                 style={{marginTop:5,width:'100%'}}
-              />
+              >
+                {this.fuzzyOptionsRender(searchedDevParticipantList)}
+              </AutoComplete>
           </InputGroup>
           <div style={{marginTop:'10px'}}>
             <div>
@@ -147,7 +169,7 @@ class ParticipantModal extends PureComponent {
             </div>
             <Divider className={styles.customDivider} style={{margin:'10px 0'}}/>
             <div>
-              {testList.map((tag) => {
+              {this.participantListGenerator(participantList,"测试").map((tag) => {
                 const isLongTag = tag.extraName.length > 20;
                 const tagElem = (
                   <Tag style={{fontSize:'initial'}} color="#2db7f5" key={tag.id} closable="true" afterClose={() => this.deleteParticipant(tag)}>
@@ -157,11 +179,17 @@ class ParticipantModal extends PureComponent {
                 return isLongTag ? <Tooltip title={tag.extraName} key={tag.id}>{tagElem}</Tooltip> :tagElem
               })}
             </div>
-            <Input
-              placeholder={"Please Input The App Name You Will Develop"}
-              onChange={this.searchAppName}
-              style={{marginTop:5}}
-            />
+            <InputGroup>
+              <AutoComplete
+                placeholder={"Please Input The User Name You Will Add"}
+                onSearch={(value)=>this.searchAppName(value,'Test')}
+                value={fuzzyTestSearched}
+                onSelect={(value)=>this.addSearchedParticipant(value,"测试",'Test')}
+                style={{marginTop:5,width:'100%'}}
+              >
+                {this.fuzzyOptionsRender(searchedTestParticipantList)}
+              </AutoComplete>
+            </InputGroup>
           </div>
           <div style={{marginTop:'10px'}}>
             <div>
@@ -170,7 +198,7 @@ class ParticipantModal extends PureComponent {
             </div>
             <Divider className={styles.customDivider} style={{margin:'10px 0'}}/>
             <div>
-              {scmList.map((tag) => {
+              {this.participantListGenerator(participantList,"配管").map((tag) => {
                 const isLongTag = tag.extraName.length > 20;
                 const tagElem = (
                   <Tag style={{fontSize:'initial'}} color="#2db7f5" key={tag.id} closable="true" afterClose={() => this.deleteParticipant(tag)}>
@@ -181,12 +209,17 @@ class ParticipantModal extends PureComponent {
               })}
             </div>
           </div>
-          <Input
-            placeholder={"Please Input The App Name You Will Develop"}
-            onChange={this.searchAppName}
-            style={{marginTop:5}}
-          />
-
+          <InputGroup>
+              <AutoComplete
+                placeholder={"Please Input The User Name You Will Add"}
+                onSearch={(value)=>this.searchAppName(value,'Scm')}
+                value={fuzzyScmSearched}
+                onSelect={(value)=>this.addSearchedParticipant(value,"配管",'Scm')}
+                style={{marginTop:5,width:'100%'}}
+              >
+                {this.fuzzyOptionsRender(searchedScmParticipantList)}
+              </AutoComplete>
+          </InputGroup>
       </Modal>
     )
   }
@@ -194,8 +227,10 @@ class ParticipantModal extends PureComponent {
 
 ParticipantModal.propTypes = {
   participantList: PropTypes.array,
-  addParticipant: PropTypes.func,
-  onOk: PropTypes.func,
+  searchedDevParticipantList:PropTypes.array,
+  searchedTestParticipantList:PropTypes.array,
+  searchedScmParticipantList:PropTypes.array,
+  onCancel: PropTypes.func,
 }
 
 export default ParticipantModal
