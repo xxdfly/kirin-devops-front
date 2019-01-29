@@ -20,13 +20,27 @@ class CreateBranchModal extends PureComponent {
 
   state = {
     devType: 2,
-    branchUrl: '',
+    customBranchUrl:'',
+    gitFlowBranchUrl:'',
+    gitFlowOption:'feature',
     createMethod:'create'
   }
 
   handleOk = () => {
     const { onOk, projectId, selectedAppList } = this.props
-    const { devType, branchUrl } = this.state
+    const { devType } = this.state
+    let branchUrl = ''
+    switch(devType){
+      case 0:
+        branchUrl = this.state.customBranchUrl
+        break
+      case 1:
+        console.log(devType)
+        break
+      case 2:
+        break
+    }
+    console.log(branchUrl)
     let scmProjectApp = {}
     Object.assign(scmProjectApp,{
       projectId: projectId,
@@ -40,9 +54,7 @@ class CreateBranchModal extends PureComponent {
 
 
   onChange = (e) => {
-    this.setState({
-      devType: e.target.value,
-    });
+    this.setState({ devType: e.target.value });
   }
 
   handleSelectBranch = (value) => {
@@ -51,8 +63,11 @@ class CreateBranchModal extends PureComponent {
     })
   }
 
+  handleCustomBranchUrl = (e) => {
+    this.setState({customBranchUrl:e.target.value})
+  }
+
   render() {
-    console.log(this.props)
     const { item = {}, onOk, form, i18n, selectedAppList, projectId, ...modalProps } = this.props
 
     let data = selectedAppList[0]||{}
@@ -84,7 +99,7 @@ class CreateBranchModal extends PureComponent {
             </InputGroup>
             {this.state.createMethod === 'create' ?
               <RadioGroup onChange={this.onChange} value={this.state.devType} style={{width:'100%',marginTop:10}}>
-                <Radio style={radioStyle} value={0}>
+                <Radio style={radioStyle} value={1}>
                   <div style={{display:'inline'}}>
                   分支名称
                   <InputGroup style={{ width: 100, marginLeft: 10, display:'inline' }}>
@@ -96,8 +111,10 @@ class CreateBranchModal extends PureComponent {
                   /{projectId}_<Input style={{width:200}}/>
                   </div>
                 </Radio>
-                <Radio style={radioStyle} value={1}>
-                  <div style={{display:'inline'}}>自定义名称 <Input style={{width:250}}/></div>
+                <Radio style={radioStyle} value={0}>
+                  <div style={{display:'inline'}}>自定义名称
+                    <Input style={{width:250}} onChange={(value)=>this.handleCustomBranchUrl(value)}/>
+                  </div>
                 </Radio>
                 <Radio style={radioStyle} value={2}>系统自动分配分支名,该选项会由系统自动生成时间格式的分支名称</Radio>
               </RadioGroup>

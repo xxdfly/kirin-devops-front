@@ -142,7 +142,9 @@ class ParticipantModal extends PureComponent {
         <div>
           <div>
             {this.labelRender(i18Label)}
-            <Button size="small" style={{float:'right'}} onClick={()=>this.addParticipantSelf(zhType)}>添加自己</Button>
+            <Button size="small" style={{float:'right'}} onClick={()=>this.addParticipantSelf(zhType)}>
+              <Trans>Add Yourself</Trans>
+            </Button>
           </div>
           <Divider className={styles.customDivider} style={{margin:'10px 0'}}/>
           <div>
