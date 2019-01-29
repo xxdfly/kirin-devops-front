@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react'
 import PropTypes from 'prop-types'
-import { Form, Input, Modal, Select, Card, Radio } from 'antd'
+import { Form, Input, Modal, Select, Card, Radio, AutoComplete } from 'antd'
 import { Trans, withI18n } from '@lingui/react'
 import styles from './CreateBranchModal.less'
 
@@ -23,12 +23,14 @@ class CreateBranchModal extends PureComponent {
     customBranchUrl:'',
     gitFlowBranchUrl:'',
     gitFlowOption:'feature',
-    createMethod:'create'
+    createMethod:'create',
+    existsBranches:this.props.existsBranches,
+    existBranchUrl:''
   }
 
   handleOk = () => {
     const { onOk, projectId, selectedAppList } = this.props
-    const { devType, gitFlowOption, gitFlowBranchUrl, customBranchUrl } = this.state
+    const { devType, gitFlowOption, gitFlowBranchUrl, customBranchUrl, existBranchUrl, existsBranches } = this.state
     let branchUrl = ''
     let type = 2
     switch(devType){
@@ -43,8 +45,11 @@ class CreateBranchModal extends PureComponent {
       case 'c':
         type = 2
         break
+      case 'd':
+        branchUrl = existBranchUrl
+        type = 1
+        break
     }
-    console.log(branchUrl)
     let scmProjectApp = {}
     Object.assign(scmProjectApp,{
       projectId: projectId,
@@ -53,16 +58,39 @@ class CreateBranchModal extends PureComponent {
       devType: type,
       branchUrl: branchUrl
     })
+    if(devType==='d' && existsBranches.length===0)return
     onOk(scmProjectApp)
   }
 
+  handleExistBranch = (value) => {
+    this.setState({ existBranchUrl: value })
+  }
+
+  searchExistsBranch = (e) => {
+    const { searchExistsBranches, selectedAppList } = this.props
+    searchExistsBranches(selectedAppList[0].id)
+  }
+
+  handleBranchSearch = (value) =>{
+    const { existsBranches } = this.state
+    let resultList = []
+    if(this.props.existsBranches){
+      this.props.existsBranches.map(item =>{
+        if(item.indexOf(value) >= 0){
+          resultList.push(item)
+        }
+      })
+    }
+    this.setState({ existsBranches:resultList})
+  }
 
   onChange = (e) => {
     this.setState({ devType: e.target.value });
   }
 
   handleSelectBranch = (value) => {
-    this.setState({ createMethod: value })
+
+    this.setState({ createMethod: value, devType: value==='update'?'d':'c' })
   }
 
   handleGitFlowOptions = (value) => {
@@ -79,7 +107,7 @@ class CreateBranchModal extends PureComponent {
 
   render() {
     const { item = {}, onOk, form, i18n, selectedAppList, projectId, ...modalProps } = this.props
-
+    const { existsBranches } = this.state
     let data = selectedAppList[0]||{}
 
     return (
@@ -129,9 +157,22 @@ class CreateBranchModal extends PureComponent {
                 <Radio style={radioStyle} value={'c'}>系统自动分配分支名,该选项会由系统自动生成时间格式的分支名称</Radio>
               </RadioGroup>
             : null}
-            {this.state.createMethod === 'update' ?
-              <div style={{display:'inline', marginTop:20, fontSize:'medium'}}>{data.path} <Input style={{width:'100%'}}/></div>
-            : null}
+            {this.state.createMethod === 'update' ?(
+              <div>
+                <div style={{ marginTop:10, width:400}}>
+                  {data.path}
+                </div>
+                <AutoComplete
+                  style={{width:'100%', marginTop:10}}
+                  placeholder={"请输入已有分支名称进行查询"}
+                  onFocus={(value)=>this.searchExistsBranch(value)}
+                  onSearch={(value)=>this.handleBranchSearch(value)}
+                  onSelect={(value)=>this.handleExistBranch(value)}
+                  dataSource={existsBranches}
+                  style={{marginTop:5,width:'100%'}}
+                />
+              </div>
+            ): null}
           </Form>
         </Card>
       </Modal>

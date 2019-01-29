@@ -36,4 +36,6 @@ export default {
 
   createParticipant: 'POST /participant/create',
   deleteParticipant: 'POST /participant/delete',
+
+  queryExistsBranches: '/project/branches'
 }

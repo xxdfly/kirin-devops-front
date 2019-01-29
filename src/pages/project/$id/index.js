@@ -1,8 +1,10 @@
 import React, { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'dva'
+import { stringify } from 'qs'
 import { Row, Col, Card, Steps, Icon, Button, message, List, Tag, Tooltip, Divider } from 'antd'
 import { Page } from 'components'
+import { router } from 'utils'
 import { Trans, withI18n } from '@lingui/react'
 import ApplyForAppModal from './components/ApplyForAppModal'
 import CreateBranchModal from './components/CreateBranchModal'
@@ -60,7 +62,8 @@ class ProjectDetail extends PureComponent {
 
   render() {
     const { current } = this.state;
-    const { projectDetail, dispatch } = this.props
+    const { projectDetail, dispatch, location } = this.props
+    const { query, pathname } = location
     const {
       data,
       applyForAppModalVisible,
@@ -70,7 +73,8 @@ class ProjectDetail extends PureComponent {
       participantList,
       searchedDevParticipantList,
       searchedTestParticipantList,
-      searchedScmParticipantList
+      searchedScmParticipantList,
+      existsBranches
     } = projectDetail
     const content = []
 
@@ -112,6 +116,19 @@ class ProjectDetail extends PureComponent {
         }else if(item.role === "PM"){
           pmList.push(item)
         }
+      })
+    }
+
+    const handleRefresh = newQuery => {
+      router.push({
+        pathname,
+        search: stringify(
+          {
+            ...query,
+            ...newQuery,
+          },
+          { arrayFormat: 'repeat' }
+        ),
       })
     }
 
@@ -184,12 +201,24 @@ class ProjectDetail extends PureComponent {
       wrapClassName: 'vertical-center-modal',
       selectedAppList:this.state.selectedAppList,
       projectId:id,
+      existsBranches:existsBranches,
       onOk(data){
-        dispatch({ type: 'project/createProjectApp', payload: data })
+        dispatch({ type: 'project/createProjectApp', payload: data }).then(() => {
+          dispatch({
+            type: 'projectDetail/hideCreateBranchModal',
+          })
+          handleRefresh()
+        })
       },
       onCancel(){
         dispatch({
           type: 'projectDetail/hideCreateBranchModal',
+        })
+      },
+      searchExistsBranches(appId){
+        dispatch({
+          type: 'projectDetail/searchExistsBranches',
+          payload:{ appId : appId }
         })
       }
     }

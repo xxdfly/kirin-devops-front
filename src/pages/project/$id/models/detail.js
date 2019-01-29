@@ -5,7 +5,8 @@ import {
   queryCodeList,
   createParticipant,
   deleteParticipant,
-  fuzzyUser
+  fuzzyUser,
+  queryExistsBranches,
 } from 'api'
 
 export default {
@@ -149,6 +150,25 @@ export default {
           }
         })
       }
+    },
+
+    *searchExistsBranches({ payload }, { call, put }){
+      const data = yield call(queryExistsBranches, payload)
+      const { success, respData } = data
+      if (success) {
+        if(respData){
+          const { branches } = respData
+          yield put({
+            type: 'updateExistsBranches',
+            payload: {
+              existsBranches: branches,
+            },
+          })
+        }
+      } else {
+        console.log(data)
+          throw data
+      }
     }
 
   },
@@ -163,6 +183,10 @@ export default {
         participantList,
         other,
       }
+    },
+
+    updateExistsBranches(state, { payload }){
+      return { ...state, ...payload }
     },
 
     updateFuzzyParticipantList(state, { payload }){
@@ -186,7 +210,7 @@ export default {
     },
 
     hideCreateBranchModal(state) {
-      return { ...state, createBranchModalVisible: false }
+      return { ...state, createBranchModalVisible: false, existsBranches:[] }
     },
 
     showParticipantModal(state, { payload }) {
