@@ -19,7 +19,7 @@ const radioStyle = {
 class CreateBranchModal extends PureComponent {
 
   state = {
-    devType: 2,
+    devType: 'c',
     customBranchUrl:'',
     gitFlowBranchUrl:'',
     gitFlowOption:'feature',
@@ -28,16 +28,20 @@ class CreateBranchModal extends PureComponent {
 
   handleOk = () => {
     const { onOk, projectId, selectedAppList } = this.props
-    const { devType } = this.state
+    const { devType, gitFlowOption, gitFlowBranchUrl, customBranchUrl } = this.state
     let branchUrl = ''
+    let type = 2
     switch(devType){
-      case 0:
-        branchUrl = this.state.customBranchUrl
+      case 'a':
+        branchUrl = gitFlowOption + "/" + projectId + "_" + gitFlowBranchUrl
+        type = 0
         break
-      case 1:
-        console.log(devType)
+      case 'b':
+        branchUrl = customBranchUrl
+        type = 0
         break
-      case 2:
+      case 'c':
+        type = 2
         break
     }
     console.log(branchUrl)
@@ -46,7 +50,7 @@ class CreateBranchModal extends PureComponent {
       projectId: projectId,
       appId: selectedAppList[0].id,
       appName: selectedAppList[0].appName,
-      devType: devType,
+      devType: type,
       branchUrl: branchUrl
     })
     onOk(scmProjectApp)
@@ -58,13 +62,19 @@ class CreateBranchModal extends PureComponent {
   }
 
   handleSelectBranch = (value) => {
-    this.setState({
-      createMethod: value,
-    })
+    this.setState({ createMethod: value })
+  }
+
+  handleGitFlowOptions = (value) => {
+    this.setState({ gitFlowOption: value })
+  }
+
+  handleGitFlowBranchurl = (e) => {
+    this.setState({ gitFlowBranchUrl: e.target.value })
   }
 
   handleCustomBranchUrl = (e) => {
-    this.setState({customBranchUrl:e.target.value})
+    this.setState({ customBranchUrl: e.target.value })
   }
 
   render() {
@@ -99,24 +109,24 @@ class CreateBranchModal extends PureComponent {
             </InputGroup>
             {this.state.createMethod === 'create' ?
               <RadioGroup onChange={this.onChange} value={this.state.devType} style={{width:'100%',marginTop:10}}>
-                <Radio style={radioStyle} value={1}>
+                <Radio style={radioStyle} value={'a'}>
                   <div style={{display:'inline'}}>
                   分支名称
                   <InputGroup style={{ width: 100, marginLeft: 10, display:'inline' }}>
-                    <Select defaultValue="feature" >
+                    <Select defaultValue="feature" style={{width:85}} onSelect={(e)=>this.handleGitFlowOptions(e)}>
                       <Option value="feature">feature</Option>
                       <Option value="dev">dev</Option>
                     </Select>
                   </InputGroup>
-                  /{projectId}_<Input style={{width:200}}/>
+                  /{projectId}_<Input style={{width:200}} onChange={(value)=>this.handleGitFlowBranchurl(value)}/>
                   </div>
                 </Radio>
-                <Radio style={radioStyle} value={0}>
+                <Radio style={radioStyle} value={'b'}>
                   <div style={{display:'inline'}}>自定义名称
                     <Input style={{width:250}} onChange={(value)=>this.handleCustomBranchUrl(value)}/>
                   </div>
                 </Radio>
-                <Radio style={radioStyle} value={2}>系统自动分配分支名,该选项会由系统自动生成时间格式的分支名称</Radio>
+                <Radio style={radioStyle} value={'c'}>系统自动分配分支名,该选项会由系统自动生成时间格式的分支名称</Radio>
               </RadioGroup>
             : null}
             {this.state.createMethod === 'update' ?
