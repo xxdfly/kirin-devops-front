@@ -19,7 +19,7 @@ const formItemLayout = {
 
 @withI18n()
 @Form.create()
-@connect(({ loading }) => ({ loading }))
+@connect()
 class CreateProject extends PureComponent {
 
   handleFields = fields => {

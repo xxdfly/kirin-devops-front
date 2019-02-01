@@ -2,6 +2,7 @@
 import React, { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import { Trans, withI18n } from '@lingui/react'
+import { router, pathMatchRegexp } from 'utils'
 import { Form, Button, Row, Col, Input } from 'antd'
 
 const { Search } = Input
@@ -99,7 +100,7 @@ class Filter extends PureComponent {
               >
                 <Trans>Search</Trans>
               </Button>
-              <Button type="ghost" href="project/create">
+              <Button type="ghost" onClick={()=>{router.push('/project/create')}}>
                 <Trans>Create</Trans>
               </Button>
             </div>

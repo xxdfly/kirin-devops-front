@@ -89,7 +89,6 @@ class CreateBranchModal extends PureComponent {
   }
 
   handleSelectBranch = (value) => {
-
     this.setState({ createMethod: value, devType: value==='update'?'d':'c' })
   }
 

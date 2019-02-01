@@ -24,6 +24,9 @@ export default {
   subscriptions: {
     setup({ dispatch, history }) {
       history.listen(({ pathname }) => {
+        console.log(pathname)
+        if(pathname.indexOf('create')>-1)
+          return
         const match = pathMatchRegexp('/project/:id', pathname)
         if (match) {
           dispatch({ type: 'query', payload: { id: match[1] } })

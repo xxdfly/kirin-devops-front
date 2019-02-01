@@ -60,6 +60,11 @@ class ProjectDetail extends PureComponent {
     })
   }
 
+  deployAliyun(appId){
+    console.log(appId);
+
+  }
+
   render() {
     const { current } = this.state;
     const { projectDetail, dispatch, location } = this.props
@@ -297,6 +302,7 @@ class ProjectDetail extends PureComponent {
                       title={<a href={"http://localhost:7000/code/"+item.appId}>{item.appName}</a>}
                       description={item.branchUrl}
                     />
+                    <Button type="primary" onClick={()=>this.deployAliyun(item.appId)}>云端发布</Button>
                   </List.Item>
                 )}
               />
