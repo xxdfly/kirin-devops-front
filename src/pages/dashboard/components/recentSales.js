@@ -27,34 +27,42 @@ const status = {
 function RecentSales({ data }) {
   const columns = [
     {
-      title: 'NAME',
-      dataIndex: 'name',
+      title: 'IP',
+      dataIndex: 'ipAddress',
+      width: '25%',
     },
     {
-      title: 'STATUS',
-      dataIndex: 'status',
-      render: text => <Tag color={status[text].color}>{status[text].text}</Tag>,
+      title: 'HOSTNAME',
+      dataIndex: 'hostName',
+      width: '25%',
     },
     {
-      title: 'DATE',
-      dataIndex: 'date',
+      title: 'OS NAME',
+      dataIndex: 'osname',
+      width: '25%',
+    },
+    {
+      title: 'Expired DATE',
+      dataIndex: 'expiredTime',
+      width: '25%',
       render: text => moment(text).format('YYYY-MM-DD'),
     },
-    {
-      title: 'PRICE',
-      dataIndex: 'price',
-      render: (text, it) => (
-        <span style={{ color: status[it.status].color }}>${text}</span>
-      ),
-    },
   ]
+  //   {
+  //     title: 'PRICE',
+  //     dataIndex: 'price',
+  //     // render: (text, it) => (
+  //     //   <span style={{ color: status[it.status].color }}>${text}</span>
+  //     // ),
+  //   },
+  // ]
   return (
     <div className={styles.recentsales}>
       <Table
         pagination={false}
         columns={columns}
         rowKey={(record, key) => key}
-        dataSource={data.filter((item, key) => key < 5)}
+        dataSource={data}
       />
     </div>
   )

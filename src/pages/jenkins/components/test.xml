@@ -1,0 +1,92 @@
+<?xml version='1.1' encoding='UTF-8'?>
+<project>
+  <actions/>
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <jenkins.model.BuildDiscarderProperty>
+      <strategy class="hudson.tasks.LogRotator">
+        <daysToKeep>-1</daysToKeep>
+        <numToKeep>5</numToKeep>
+        <artifactDaysToKeep>-1</artifactDaysToKeep>
+        <artifactNumToKeep>-1</artifactNumToKeep>
+      </strategy>
+    </jenkins.model.BuildDiscarderProperty>
+  </properties>
+  <scm class="hudson.plugins.git.GitSCM" plugin="git@3.9.1">
+    <configVersion>2</configVersion>
+    <userRemoteConfigs>
+      <hudson.plugins.git.UserRemoteConfig>
+        <url>${masterUrl}</url>
+        <credentialsId>${gitCredentialsID}</credentialsId>
+      </hudson.plugins.git.UserRemoteConfig>
+    </userRemoteConfigs>
+    <branches>
+      <hudson.plugins.git.BranchSpec>
+        <name>${branchName}</name>
+      </hudson.plugins.git.BranchSpec>
+    </branches>
+    <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
+    <submoduleCfg class="list"/>
+    <extensions/>
+  </scm>
+  <assignedNode>${assignedNode}</assignedNode>
+  <canRoam>false</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers/>
+  <concurrentBuild>false</concurrentBuild>
+  <builders>
+    <hudson.tasks.Shell>
+      <command>
+        ${commandShell}
+      </command>
+    </hudson.tasks.Shell>
+    <com.cloudbees.dockerpublish.DockerBuilder plugin="docker-build-publish@1.3.2">
+      <server plugin="docker-commons@1.13"/>
+      <registry plugin="docker-commons@1.13">
+        <url>${registryURL}</url>
+        <credentialsId>${registryCredentialsID}</credentialsId>
+      </registry>
+      <repoName>${repoName}</repoName>
+      <noCache>false</noCache>
+      <forcePull>true</forcePull>
+      <buildContext>${buildDir}</buildContext>
+      <dockerfilePath>${dockerfilePath}</dockerfilePath>
+      <skipBuild>false</skipBuild>
+      <skipDecorate>false</skipDecorate>
+      <repoTag>${BUILD_NUMBER}</repoTag>
+      <skipPush>false</skipPush>
+      <createFingerprint>true</createFingerprint>
+      <skipTagLatest>true</skipTagLatest>
+      <buildAdditionalArgs></buildAdditionalArgs>
+      <forceTag>false</forceTag>
+    </com.cloudbees.dockerpublish.DockerBuilder>
+    <com.aliyun.www.cos.DeployBuilder plugin="aliyun-container-service-deploy@0.1.1">
+      <masterurl>${swarmURL}</masterurl>
+      <credentialsId>${swarmCredentialsID}</credentialsId>
+      <appName>${appName}</appName>
+      <composeTemplate>${appComposePath}</composeTemplate>
+      <publishStrategy>rolling</publishStrategy>
+    </com.aliyun.www.cos.DeployBuilder>
+    <org.jenkinsci.plugins.buildnameupdater.BuildNameUpdater plugin="build-name-setter@1.6.9">
+      <buildName>version.txt</buildName>
+      <macroTemplate>#${BUILD_NUMBER}</macroTemplate>
+      <fromFile>false</fromFile>
+      <fromMacro>true</fromMacro>
+      <macroFirst>false</macroFirst>
+    </org.jenkinsci.plugins.buildnameupdater.BuildNameUpdater>
+  </builders>
+  <publishers>
+    <com.ztbsuper.dingding.DingdingNotifier plugin="dingding-notifications@1.9">
+      <accessToken>274b01e5e89dd3403cd9f1f05a85309d887d55fb0e39dd8d64daca5c91f6c183</accessToken>
+      <onStart>true</onStart>
+      <onSuccess>true</onSuccess>
+      <onFailed>true</onFailed>
+      <onAbort>true</onAbort>
+      <jenkinsURL>http://139.224.233.81:8080/</jenkinsURL>
+    </com.ztbsuper.dingding.DingdingNotifier>
+  </publishers>
+  <buildWrappers/>
+</project>

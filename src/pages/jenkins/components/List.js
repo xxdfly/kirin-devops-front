@@ -23,54 +23,42 @@ class List extends PureComponent {
     })
   }
 
-  privilegeTypeRender = (text, record) => {
-    let type = ''
-    switch (record.type) {
-      case 1:
-        type = 'Username with password'
-        break
-      case 2:
-        type = 'Docker Host Certificate Authentication'
-        break
-      case 3:
-        type = 'SSH Username with private key'
-        break
-    }
-    return type
-  }
-
   render() {
     const { onDeleteItem, onEditItem, i18n, ...tableProps } = this.props
 
     const columns = [
       {
-        title: 'CredentialId',
-        dataIndex: 'credentialId',
-        key: 'credentialId',
+        title: 'ID',
+        dataIndex: 'id',
+        key: 'id',
       },
       {
-        title: <Trans>Privilege Name</Trans>,
-        dataIndex: 'displayName',
-        key: 'displayName',
+        title: 'IP:PORT',
+        dataIndex: 'ip',
+        key: 'ip',
       },
       {
-        title: <Trans>Privilege Type</Trans>,
-        dataIndex: 'type',
-        key: 'type',
-        render: (text, record) => this.privilegeTypeRender(text, record),
+        title: <Trans>Account</Trans>,
+        dataIndex: 'user',
+        key: 'user',
       },
       {
-        title: <Trans>Description</Trans>,
-        dataIndex: 'description',
-        key: 'description',
+        title: <Trans>Password</Trans>,
+        key: 'password',
+        dataIndex: 'password',
       },
       {
-        title: <Trans>Privilege Creator</Trans>,
-        key: 'creator',
-        dataIndex: 'creator',
+        title: <Trans>Create Time</Trans>,
+        dataIndex: 'gmtCreate',
+        key: 'gmtCreate',
       },
       {
-        title: <Trans>Options</Trans>,
+        title: <Trans>Update Time</Trans>,
+        dataIndex: 'gmtModified',
+        key: 'gmtModified',
+      },
+      {
+        title: '操作',
         key: 'action',
         render: (text, record) => (
           <span>

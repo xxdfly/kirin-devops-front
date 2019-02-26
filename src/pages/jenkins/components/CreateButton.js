@@ -20,23 +20,13 @@ const TwoColProps = {
 @withI18n()
 @Form.create()
 class CreateButton extends PureComponent {
-
   render() {
     const { onAdd } = this.props
 
     return (
-      <Row gutter={48}>
-        <Col {...ColProps} xl={{ span: 22 }} md={{ span: 48 }}>
-
-        </Col>
-        <Col {...TwoColProps} xl={{ span: 2 }} md={{ span: 4 }} sm={{ span: 8 }}>
-          <Row type="flex" align="middle" justify="space-between">
-            <Button type="ghost" onClick={onAdd}>
-              <Trans>Create Privilege</Trans>
-            </Button>
-          </Row>
-        </Col>
-      </Row>
+      <Button type="ghost" onClick={onAdd}>
+        <Trans>Create Jenkins</Trans>
+      </Button>
     )
   }
 }

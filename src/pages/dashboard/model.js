@@ -1,6 +1,13 @@
 import { parse } from 'qs'
 import modelExtend from 'dva-model-extend'
-import { queryDashboard, queryWeather } from 'api'
+import {
+  queryDashboard,
+  queryWeather,
+  queryAccount,
+  queryECS,
+  queryRDS,
+  queryCDNTopDomain,
+} from 'api'
 import { pathMatchRegexp } from 'utils'
 import { model } from 'utils/model'
 
@@ -14,11 +21,14 @@ export default modelExtend(model, {
       icon: '//s5.sencdn.com/web/icons/3d_50/2.png',
     },
     sales: [],
+    cdnTopList: [],
+    consume: [],
     quote: {
       avatar:
         'http://img.hb.aicdn.com/bc442cf0cc6f7940dcc567e465048d1a8d634493198c4-sPx5BR_fw236',
     },
     numbers: [],
+    accounts: [],
     recentSales: [],
     comments: [],
     completed: [],
@@ -38,6 +48,10 @@ export default modelExtend(model, {
         ) {
           dispatch({ type: 'query' })
           dispatch({ type: 'queryWeather' })
+          dispatch({ type: 'queryAccount' })
+          dispatch({ type: 'queryECS' })
+          dispatch({ type: 'queryRDS' })
+          dispatch({ type: 'queryCDNTopDomain' })
         }
       })
     },
@@ -47,9 +61,57 @@ export default modelExtend(model, {
       const data = yield call(queryDashboard, parse(payload))
       yield put({
         type: 'updateState',
-        payload: data,
+        payload: {
+          consume: data.respData.consume,
+          data,
+        },
       })
     },
+
+    *queryAccount({ payload }, { call, put }) {
+      const data = yield call(queryAccount, parse(payload))
+      yield put({
+        type: 'updateState',
+        payload: {
+          accounts: data.respData,
+          data,
+        },
+      })
+    },
+
+    *queryECS({ payload }, { call, put }) {
+      const data = yield call(queryECS, parse(payload))
+      yield put({
+        type: 'updateState',
+        payload: {
+          ecslist: data.respList,
+          data,
+        },
+      })
+    },
+
+    *queryRDS({ payload }, { call, put }) {
+      const data = yield call(queryRDS, parse(payload))
+      yield put({
+        type: 'updateState',
+        payload: {
+          rdsList: data.respList,
+          data,
+        },
+      })
+    },
+
+    *queryCDNTopDomain({ payload }, { call, put }) {
+      const data = yield call(queryCDNTopDomain, parse(payload))
+      yield put({
+        type: 'updateState',
+        payload: {
+          cdnTopList: data.respList,
+          data,
+        },
+      })
+    },
+
     *queryWeather({ payload = {} }, { call, put }) {
       payload.location = 'hangzhou'
       const result = yield call(queryWeather, payload)

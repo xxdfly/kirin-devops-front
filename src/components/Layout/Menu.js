@@ -15,7 +15,6 @@ const { SubMenu } = Menu
 
 const JenkinsSvg = () => (
   <svg
-    class="icon"
     viewBox="64 64 896 896"
     width="1em"
     height="1em"

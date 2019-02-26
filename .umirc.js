@@ -77,11 +77,11 @@ export default {
       pathRewrite: { '^/api/sys/weather': '/v3/weather' },
     },
     '/api/sys':{
-      target: 'http://127.0.0.1:10010/',
+      target: 'http://47.101.41.37:10010/',
       changeOrigin: true
     },
     '/oauth/token':{
-      target: 'http://127.0.0.1:10010/',
+      target: 'http://47.101.41.37:10010/',
       changeOrigin: true
     },
   },

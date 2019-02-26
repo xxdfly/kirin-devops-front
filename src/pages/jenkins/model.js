@@ -1,41 +1,38 @@
 /* global window */
-import modelExtend from 'dva-model-extend'
 import { pathMatchRegexp } from 'utils'
+import modelExtend from 'dva-model-extend'
 import {
-  removeUserList,
-  queryCodeList,
-  createCode,
-  updateCode,
-  removeCode,
-  queryPrililegeOptions,
+  queryJenkinsList,
+  createJenkinsInfo,
+  queryJenkinsCredentials,
+  removePrivilege,
+  updatePrivilege,
+  syncJenkinsCredentials,
 } from 'api'
-import { pageModel } from 'utils/model'
+import { model } from 'utils/model'
 
-export default modelExtend(pageModel, {
-  namespace: 'code',
+export default modelExtend(model, {
+  namespace: 'jenkins',
 
   state: {
+    list: [],
     currentItem: {},
     modalVisible: false,
     modalType: 'create',
     selectedRowKeys: [],
-    credentials: [],
   },
 
   subscriptions: {
     setup({ dispatch, history }) {
       history.listen(location => {
-        if (pathMatchRegexp('/code', location.pathname)) {
+        if (pathMatchRegexp('/jenkins', location.pathname)) {
           const payload = location.query || { page: 1, pageSize: 10 }
           dispatch({
             type: 'query',
             payload,
           })
-        }
-        if (pathMatchRegexp('/code/create', location.pathname)) {
-          const payload = location.query || { page: 1, pageSize: 10 }
           dispatch({
-            type: 'queryCredentials',
+            type: 'credentials',
             payload,
           })
         }
@@ -45,24 +42,19 @@ export default modelExtend(pageModel, {
 
   effects: {
     *query({ payload = {} }, { call, put }) {
-      const data = yield call(queryCodeList, payload)
+      const data = yield call(queryJenkinsList, payload)
       if (data) {
         yield put({
-          type: 'querySuccess',
+          type: 'updateState',
           payload: {
             list: data.respList,
-            pagination: {
-              current: Number(payload.page) || 1,
-              pageSize: Number(payload.pageSize) || 10,
-              total: data.total,
-            },
           },
         })
       }
     },
 
-    *queryCredentials({ payload = {} }, { call, put }) {
-      const data = yield call(queryPrililegeOptions, payload)
+    *credentials({ payload = {} }, { call, put }) {
+      const data = yield call(queryJenkinsCredentials, payload)
       if (data) {
         yield put({
           type: 'updateState',
@@ -73,9 +65,13 @@ export default modelExtend(pageModel, {
       }
     },
 
+    *syncJenkinsCredentials({ payload = {} }, { call, put }) {
+      yield call(syncJenkinsCredentials, payload)
+    },
+
     *delete({ payload }, { call, put, select }) {
-      const data = yield call(removeCode, { id: payload })
-      const { selectedRowKeys } = yield select(_ => _.code)
+      const data = yield call(removePrivilege, { id: payload })
+      const { selectedRowKeys } = yield select(_ => _.privilege)
       if (data.success) {
         yield put({
           type: 'updateState',
@@ -88,17 +84,8 @@ export default modelExtend(pageModel, {
       }
     },
 
-    *multiDelete({ payload }, { call, put }) {
-      const data = yield call(removeUserList, payload)
-      if (data.success) {
-        yield put({ type: 'updateState', payload: { selectedRowKeys: [] } })
-      } else {
-        throw data
-      }
-    },
-
     *create({ payload }, { call, put }) {
-      const data = yield call(createCode, payload)
+      const data = yield call(createJenkinsInfo, payload)
       if (data.success) {
         yield put({ type: 'hideModal' })
       } else {
@@ -107,9 +94,9 @@ export default modelExtend(pageModel, {
     },
 
     *update({ payload }, { select, call, put }) {
-      const id = yield select(({ code }) => code.currentItem.id)
-      const newCode = { ...payload, id }
-      const data = yield call(updateCode, newCode)
+      const id = yield select(({ privilege }) => privilege.currentItem.id)
+      const newPrivilege = { ...payload, id }
+      const data = yield call(updatePrivilege, newPrivilege)
       if (data.success) {
         yield put({ type: 'hideModal' })
       } else {
@@ -119,6 +106,16 @@ export default modelExtend(pageModel, {
   },
 
   reducers: {
+    querySuccess(state, { payload }) {
+      const { list, credentials, other } = payload
+      return {
+        ...state,
+        list,
+        credentials,
+        other,
+      }
+    },
+
     showModal(state, { payload }) {
       return { ...state, ...payload, modalVisible: true }
     },

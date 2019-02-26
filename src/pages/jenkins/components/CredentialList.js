@@ -7,7 +7,7 @@ import styles from './List.less'
 const { confirm } = Modal
 
 @withI18n()
-class List extends PureComponent {
+class CredentialList extends PureComponent {
   handleUpdateClick = record => {
     const { onEditItem } = this.props
     onEditItem(record)
@@ -23,54 +23,27 @@ class List extends PureComponent {
     })
   }
 
-  privilegeTypeRender = (text, record) => {
-    let type = ''
-    switch (record.type) {
-      case 1:
-        type = 'Username with password'
-        break
-      case 2:
-        type = 'Docker Host Certificate Authentication'
-        break
-      case 3:
-        type = 'SSH Username with private key'
-        break
-    }
-    return type
-  }
-
   render() {
     const { onDeleteItem, onEditItem, i18n, ...tableProps } = this.props
 
     const columns = [
       {
-        title: 'CredentialId',
-        dataIndex: 'credentialId',
-        key: 'credentialId',
+        title: 'ID',
+        dataIndex: 'id',
+        key: 'id',
       },
       {
-        title: <Trans>Privilege Name</Trans>,
+        title: 'Display Name',
         dataIndex: 'displayName',
         key: 'displayName',
       },
       {
-        title: <Trans>Privilege Type</Trans>,
-        dataIndex: 'type',
-        key: 'type',
-        render: (text, record) => this.privilegeTypeRender(text, record),
+        title: <Trans>typeName</Trans>,
+        key: 'typeName',
+        dataIndex: 'typeName',
       },
       {
-        title: <Trans>Description</Trans>,
-        dataIndex: 'description',
-        key: 'description',
-      },
-      {
-        title: <Trans>Privilege Creator</Trans>,
-        key: 'creator',
-        dataIndex: 'creator',
-      },
-      {
-        title: <Trans>Options</Trans>,
+        title: '操作',
         key: 'action',
         render: (text, record) => (
           <span>
@@ -101,10 +74,10 @@ class List extends PureComponent {
   }
 }
 
-List.propTypes = {
+CredentialList.propTypes = {
   onDeleteItem: PropTypes.func,
   onEditItem: PropTypes.func,
   location: PropTypes.object,
 }
 
-export default List
+export default CredentialList

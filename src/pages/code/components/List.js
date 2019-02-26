@@ -24,12 +24,12 @@ class List extends PureComponent {
     }
   }
 
-  handleUpdateClick = (record) => {
+  handleUpdateClick = record => {
     const { onEditItem } = this.props
     onEditItem(record)
   }
 
-  handleDeleteClick = (record) => {
+  handleDeleteClick = record => {
     const { onDeleteItem, i18n } = this.props
     confirm({
       title: i18n.t`Are you sure delete this record?`,
@@ -65,6 +65,7 @@ class List extends PureComponent {
         title: <Trans>Path</Trans>,
         dataIndex: 'path',
         key: 'path',
+        styles: { width: '10%' },
       },
       {
         title: <Trans>CodeType</Trans>,
@@ -98,11 +99,15 @@ class List extends PureComponent {
         // fixed: 'right',
         render: (text, record) => (
           <span>
-           <a onClick={() => this.handleUpdateClick(record)}><Trans>Modify</Trans></a>
+            <a onClick={() => this.handleUpdateClick(record)}>
+              <Trans>Modify</Trans>
+            </a>
             <Divider type="vertical" />
-            <a onClick={() => this.handleDeleteClick(record)}><Trans>Delete</Trans></a>
+            <a onClick={() => this.handleDeleteClick(record)}>
+              <Trans>Delete</Trans>
+            </a>
           </span>
-        )
+        ),
       },
     ]
 

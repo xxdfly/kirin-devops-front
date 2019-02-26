@@ -4,12 +4,13 @@ import { connect } from 'dva'
 import { stringify } from 'qs'
 import { Row, Col, Card, Steps, Icon, Button, message, List, Tag, Tooltip, Divider } from 'antd'
 import { Page } from 'components'
-import { router } from 'utils'
+import { router, Color } from 'utils'
 import { Trans, withI18n } from '@lingui/react'
 import ApplyForAppModal from './components/ApplyForAppModal'
 import CreateBranchModal from './components/CreateBranchModal'
 import ParticipantModal from './components/ParticipantModal'
 import styles from './index.less'
+import CompileScriptModal from './components/CompileScriptModal';
 
 const Step = Steps.Step;
 
@@ -31,16 +32,56 @@ const steps = [{
   icon:<Icon type="poweroff" />,
 }];
 
+const appStatusList = {
+  '开发中': {
+    color: Color.green,
+    text: 'Developing',
+  },
+  '编译中': {
+    color: Color.blue,
+    text: 'Compiling',
+  },
+  '编译成功': {
+    color: Color.green,
+    text: 'Success',
+  },
+  '编译失败': {
+    color: Color.red,
+    text: 'Fail'
+  }
+}
+
 @withI18n()
-@connect(({ projectDetail }) => ({ projectDetail }))
+@connect(({ projectDetail, loading }) => ({ projectDetail, loading }))
 class ProjectDetail extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
       current: 0,
-      selectedAppList:[]
+      selectedAppList:[],
+      selectedApp:{}
     };
   }
+
+  componentDidMount() {
+    this.timerID = setInterval(
+      () => this.handleQuery(),
+      1000*10
+    );
+  }
+
+  componentWillUnmount(){
+    clearInterval(this.timerID);
+  }
+
+  handleQuery(){
+    const { dispatch, projectDetail } = this.props
+    dispatch({ 
+      type: 'projectDetail/query', 
+      payload: { id: projectDetail.data.id } 
+    })
+  }
+
 
   next() {
     const current = this.state.current + 1;
@@ -60,26 +101,24 @@ class ProjectDetail extends PureComponent {
     })
   }
 
-  deployAliyun(appId){
-    console.log(appId);
-
-  }
-
   render() {
     const { current } = this.state;
     const { projectDetail, dispatch, location } = this.props
     const { query, pathname } = location
+
     const {
       data,
       applyForAppModalVisible,
       appList,
       createBranchModalVisible,
       participantModalVisible,
+      compileScriptModalVisible,
       participantList,
       searchedDevParticipantList,
       searchedTestParticipantList,
       searchedScmParticipantList,
-      existsBranches
+      existsBranches,
+      scriptList
     } = projectDetail
     const content = []
 
@@ -187,9 +226,6 @@ class ProjectDetail extends PureComponent {
       onOk:(data)=> {
         this.setState({selectedAppList:data})
         dispatch({
-          type: 'projectDetail/hideApplyForAppModal',
-        })
-        dispatch({
           type: 'projectDetail/showCreateBranchModal',
         })
       },
@@ -245,6 +281,27 @@ class ProjectDetail extends PureComponent {
       }
     }
 
+    const compileScriptModalProps = {
+      visible: compileScriptModalVisible,
+      maskClosable: false,
+      wrapClassName: 'vertical-center-modal',
+      crid:id,
+      selectedApp: this.state.selectedApp,
+      packageType: 0,
+      scriptList: scriptList,
+      onCancel(){
+        dispatch({
+          type: 'projectDetail/hideCompileScriptModal',
+        })
+      },
+      onOk:(param)=>{
+        dispatch({
+          type: 'projectDetail/triggerCompileJob',
+          payload: param
+        })
+      }
+    }
+
     const showApplyForApp = () => {
       dispatch({
         type: 'projectDetail/showApplyForAppModal'
@@ -255,6 +312,27 @@ class ProjectDetail extends PureComponent {
       dispatch({
         type: 'projectDetail/showParticipantModal'
       })
+    }
+
+    const deployAliyun = (item) => {
+      this.setState({ selectedApp: item})
+      dispatch({
+        type: 'projectDetail/showCompileScriptModal'
+      })
+      // .then(() => {
+      //   let param = {}
+      //   param.crid = id
+      //   param.appId = item.appId
+      //   param.appName = item.appName
+      //   param.projectAppId = item.id
+      //   // param.scriptId = scriptId
+      //   // param.packageType = packageType
+      //   dispatch({
+      //     type: 'projectDetail/triggerCompileJob',
+      //     payload: param
+      //   })
+      // })
+  
     }
 
     return (
@@ -299,10 +377,20 @@ class ProjectDetail extends PureComponent {
                 renderItem={item => (
                   <List.Item>
                     <List.Item.Meta
-                      title={<a href={"http://localhost:7000/code/"+item.appId}>{item.appName}</a>}
-                      description={item.branchUrl}
+                      title={
+                        <div>
+                        <a href={"http://localhost:7000/code/"+item.appId}>{item.appName}</a>
+
+                        <Tag color={appStatusList[item.appStatus].color} style={{marginLeft:'40%'}}>{item.appStatus}</Tag>
+                        </div>
+                      }
+                      description={
+                        <div>
+                          <div>{item.branchUrl}</div>
+                        </div>
+                      }
                     />
-                    <Button type="primary" onClick={()=>this.deployAliyun(item.appId)}>云端发布</Button>
+                    <Button type="primary" onClick={()=>deployAliyun(item)}>云端发布</Button>
                   </List.Item>
                 )}
               />
@@ -348,6 +436,7 @@ class ProjectDetail extends PureComponent {
         {applyForAppModalVisible && <ApplyForAppModal {...applyForAppModalProps} />}
         {createBranchModalVisible && <CreateBranchModal {...createBranchModalProps} />}
         {participantModalVisible && <ParticipantModal {...participantModalProps} />}
+        {compileScriptModalVisible && <CompileScriptModal {...compileScriptModalProps} />}
       </Page>
     )
   }

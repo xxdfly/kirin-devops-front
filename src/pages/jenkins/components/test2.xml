@@ -1,0 +1,96 @@
+<?xml version='1.1' encoding='UTF-8'?>
+<project>
+  <actions/>
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <jenkins.model.BuildDiscarderProperty>
+      <strategy class="hudson.tasks.LogRotator">
+        <daysToKeep>-1</daysToKeep>
+        <numToKeep>5</numToKeep>
+        <artifactDaysToKeep>-1</artifactDaysToKeep>
+        <artifactNumToKeep>-1</artifactNumToKeep>
+      </strategy>
+    </jenkins.model.BuildDiscarderProperty>
+  </properties>
+  <scm class="hudson.plugins.git.GitSCM" plugin="git@3.9.1">
+    <configVersion>2</configVersion>
+    <userRemoteConfigs>
+      <hudson.plugins.git.UserRemoteConfig>
+        <url>https://git.51kirin.com/kkd/kkd-all.git</url>
+        <credentialsId>b83e04f4-3ed5-4d5d-96db-d28859a1d909</credentialsId>
+      </hudson.plugins.git.UserRemoteConfig>
+    </userRemoteConfigs>
+    <branches>
+      <hudson.plugins.git.BranchSpec>
+        <name>*/xxd_test</name>
+      </hudson.plugins.git.BranchSpec>
+    </branches>
+    <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
+    <submoduleCfg class="list"/>
+    <extensions/>
+  </scm>
+  <assignedNode>java8</assignedNode>
+  <canRoam>false</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers/>
+  <concurrentBuild>false</concurrentBuild>
+  <builders>
+    <hudson.tasks.Shell>
+      <command>
+export JAVA_HOME=/usr/install/jdk1.8.0_191
+export M2_HOME=/usr/install/apache-maven-3.6.0
+export PATH=$JAVA_HOME/bin:$M2_HOME/bin:$PATH
+
+mvn -f kkd-all/pom.xml package -B -DskipTests -X -e -U
+</command>
+    </hudson.tasks.Shell>
+    <com.cloudbees.dockerpublish.DockerBuilder plugin="docker-build-publish@1.3.2">
+      <server plugin="docker-commons@1.13"/>
+      <registry plugin="docker-commons@1.13">
+        <url>https://registry.cn-shanghai.aliyuncs.com/v2/</url>
+        <credentialsId>8500eb7d-a82e-4a93-b269-3ec6d15b9a8c</credentialsId>
+      </registry>
+      <repoName>jsxx/kkd_api</repoName>
+      <noCache>false</noCache>
+      <forcePull>true</forcePull>
+      <buildContext>kkd-all</buildContext>
+      <dockerfilePath>kkd-all/Dockerfile</dockerfilePath>
+      <skipBuild>false</skipBuild>
+      <skipDecorate>false</skipDecorate>
+      <repoTag>${BUILD_NUMBER}</repoTag>
+      <skipPush>false</skipPush>
+      <createFingerprint>true</createFingerprint>
+      <skipTagLatest>true</skipTagLatest>
+      <buildAdditionalArgs></buildAdditionalArgs>
+      <forceTag>false</forceTag>
+    </com.cloudbees.dockerpublish.DockerBuilder>
+    <com.aliyun.www.cos.DeployBuilder plugin="aliyun-container-service-deploy@0.1.1">
+      <masterurl>https://master2g4.cs-cn-shanghai.aliyun.com:20090</masterurl>
+      <credentialsId>6aab9cde-d98b-4a83-99b9-168137ec2b78</credentialsId>
+      <appName>kkd-dev</appName>
+      <composeTemplate>kkd-all/docker-compose-dev.yml</composeTemplate>
+      <publishStrategy>rolling</publishStrategy>
+    </com.aliyun.www.cos.DeployBuilder>
+    <org.jenkinsci.plugins.buildnameupdater.BuildNameUpdater plugin="build-name-setter@1.6.9">
+      <buildName>version.txt</buildName>
+      <macroTemplate>#${BUILD_NUMBER}</macroTemplate>
+      <fromFile>false</fromFile>
+      <fromMacro>true</fromMacro>
+      <macroFirst>false</macroFirst>
+    </org.jenkinsci.plugins.buildnameupdater.BuildNameUpdater>
+  </builders>
+  <publishers>
+    <com.ztbsuper.dingding.DingdingNotifier plugin="dingding-notifications@1.9">
+      <accessToken>274b01e5e89dd3403cd9f1f05a85309d887d55fb0e39dd8d64daca5c91f6c183</accessToken>
+      <onStart>true</onStart>
+      <onSuccess>true</onSuccess>
+      <onFailed>true</onFailed>
+      <onAbort>true</onAbort>
+      <jenkinsURL>http://139.224.233.81:8080/</jenkinsURL>
+    </com.ztbsuper.dingding.DingdingNotifier>
+  </publishers>
+  <buildWrappers/>
+</project>

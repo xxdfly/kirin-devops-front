@@ -7,6 +7,7 @@ import {
   removePrivilege,
   updatePrivilege,
 } from 'api'
+import { router } from 'utils'
 import { pageModel } from 'utils/model'
 
 export default modelExtend(pageModel, {
@@ -55,6 +56,7 @@ export default modelExtend(pageModel, {
       const data = yield call(removePrivilege, { id: payload })
       const { selectedRowKeys } = yield select(_ => _.privilege)
       if (data.success) {
+        router.push('/privilege')
         yield put({
           type: 'updateState',
           payload: {
@@ -69,7 +71,7 @@ export default modelExtend(pageModel, {
     *create({ payload }, { call, put }) {
       const data = yield call(createPrivilege, payload)
       if (data.success) {
-        yield put({ type: 'hideModal' })
+        router.push('/privilege')
       } else {
         throw data
       }

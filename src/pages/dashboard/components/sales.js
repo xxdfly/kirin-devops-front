@@ -17,7 +17,7 @@ import styles from './sales.less'
 function Sales({ data }) {
   return (
     <div className={styles.sales}>
-      <div className={styles.title}>Yearly Sales</div>
+      <div className={styles.title}>近期消费</div>
       <ResponsiveContainer minHeight={360}>
         <LineChart data={data}>
           <Legend
@@ -61,32 +61,34 @@ function Sales({ data }) {
               boxShadow: '4px 4px 40px rgba(0, 0, 0, 0.05)',
             }}
             content={content => {
-              const list = content.payload.map((item, key) => (
-                <li key={key} className={styles.tipitem}>
-                  <span
-                    className={styles.radiusdot}
-                    style={{ background: item.color }}
-                  />
-                  {`${item.name}:${item.value}`}
-                </li>
-              ))
-              return (
-                <div className={styles.tooltip}>
-                  <p className={styles.tiptitle}>{content.label}</p>
-                  <ul>{list}</ul>
-                </div>
-              )
+              if (content.payload) {
+                const list = content.payload.map((item, key) => (
+                  <li key={key} className={styles.tipitem}>
+                    <span
+                      className={styles.radiusdot}
+                      style={{ background: item.color }}
+                    />
+                    {`${item.name}:${item.value}`}
+                  </li>
+                ))
+                return (
+                  <div className={styles.tooltip}>
+                    <p className={styles.tiptitle}>{content.label}</p>
+                    <ul>{list}</ul>
+                  </div>
+                )
+              }
             }}
           />
           <Line
             type="monotone"
-            dataKey="Food"
-            stroke={Color.purple}
+            dataKey="payment"
+            stroke={Color.green}
             strokeWidth={3}
-            dot={{ fill: Color.purple }}
+            dot={{ fill: Color.green }}
             activeDot={{ r: 5, strokeWidth: 0 }}
           />
-          <Line
+          {/* <Line
             type="monotone"
             dataKey="Clothes"
             stroke={Color.red}
@@ -101,7 +103,7 @@ function Sales({ data }) {
             strokeWidth={3}
             dot={{ fill: Color.green }}
             activeDot={{ r: 5, strokeWidth: 0 }}
-          />
+          /> */}
         </LineChart>
       </ResponsiveContainer>
     </div>

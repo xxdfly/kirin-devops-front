@@ -1,5 +1,7 @@
 import { pathMatchRegexp } from 'utils'
+import modelExtend from 'dva-model-extend'
 import { cloneDeep } from 'lodash'
+import { model } from 'utils/model'
 import {
   queryProject,
   queryCodeList,
@@ -7,9 +9,11 @@ import {
   deleteParticipant,
   fuzzyUser,
   queryExistsBranches,
+  triggerCompileJob,
+  queryScriptList,
 } from 'api'
 
-export default {
+export default modelExtend(model, {
   namespace: 'projectDetail',
 
   state: {
@@ -18,18 +22,21 @@ export default {
     applyForAppModalVisible: false,
     createBranchModalVisible: false,
     participantModalVisible: false,
+    compileScriptModalVisible: false,
     participantList:[],
+    scriptList:[],
   },
 
   subscriptions: {
     setup({ dispatch, history }) {
       history.listen(({ pathname }) => {
-        console.log(pathname)
         if(pathname.indexOf('create')>-1)
           return
         const match = pathMatchRegexp('/project/:id', pathname)
         if (match) {
+          dispatch({ type: 'queryScriptList' })
           dispatch({ type: 'query', payload: { id: match[1] } })
+          dispatch({ type: 'queryCodeList' })
         }
       })
     },
@@ -38,23 +45,46 @@ export default {
   effects: {
     *query({ payload }, { call, put }) {
       const data = yield call(queryProject, payload)
-      const { success, respData } = data
-      if (success) {
-        const appData = yield call(queryCodeList)
-        const { success, message, status, respList, ...other } = appData
-        if (success) {
+      if (data) {
+        yield put({
+          type: 'updateState',
+          payload: {
+            data: data.respData,
+            participantList: data.scmProjectParticipantInfoList
+          },
+        })
+      }
+    },
+
+    *queryCodeList({ payload }, { call, put }) {
+        const data = yield call(queryCodeList, payload)
+        if (data) {
           yield put({
-            type: 'querySuccess',
+            type: 'updateState',
             payload: {
-              data: respData,
-              appList: respList,
-              participantList: respData.scmProjectParticipantInfoList,
-              other: other,
+              appList: data.respList,
             },
           })
-        } else {
-          throw data
         }
+    },
+
+    *queryScriptList({ payload }, { call, put }) {
+      const data = yield call(queryScriptList, payload)
+      if (data) {
+        yield put({
+          type: 'updateState',
+          payload: {
+            scriptList: data.respList
+          },
+        })
+    }
+    },
+
+    *triggerCompileJob({ payload }, { call, put }) {
+      const data = yield call(triggerCompileJob, payload)
+      const { success, respData } = data
+      if (success) {
+        console.log(data)
       }
     },
 
@@ -209,7 +239,7 @@ export default {
     },
 
     showCreateBranchModal(state, { payload }) {
-      return { ...state, ...payload, createBranchModalVisible: true }
+      return { ...state, ...payload, createBranchModalVisible: true, applyForAppModalVisible: false }
     },
 
     hideCreateBranchModal(state) {
@@ -239,5 +269,13 @@ export default {
       }
     },
 
+    showCompileScriptModal(state, { payload }) {
+      return { ...state, ...payload, compileScriptModalVisible: true }
+    },
+
+    hideCompileScriptModal(state, { payload }) {
+      return { ...state, ...payload, compileScriptModalVisible: false }
+    },
+
   },
-}
+})

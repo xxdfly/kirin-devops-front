@@ -11,9 +11,9 @@ import {
   Weather,
   RecentSales,
   Comments,
-  Completed,
+  // Completed,
   Browser,
-  Cpu,
+  // Cpu,
   User,
 } from './components'
 import styles from './index.less'
@@ -31,24 +31,51 @@ const bodyStyle = {
   dashboard,
   loading,
 }))
-
 class Dashboard extends PureComponent {
   render() {
     const { avatar, username, dashboard, loading } = this.props
     const {
+      consume,
       weather,
-      sales,
+      ecslist,
       quote,
-      numbers,
+      accounts,
       recentSales,
-      comments,
+      rdsList,
       completed,
-      browser,
+      cdnTopList,
       cpu,
       user,
     } = dashboard
 
-    const numberCards = numbers.map((item, key) => (
+    const numberOptions = [
+      {
+        color: '#64ea91',
+        icon: 'icon-yue1',
+        number: accounts.AvailableCashAmount,
+        title: '现金余额',
+      },
+      {
+        color: '#8fc9fb',
+        icon: 'icon-edu',
+        number: accounts.AvailableAmount,
+        title: '可用额度',
+      },
+      {
+        color: '#d897eb',
+        icon: 'icon-shiliangzhinengduixiang-',
+        number: accounts.MybankCreditAmount,
+        title: '网商银行信用额度',
+      },
+      {
+        color: '#f69899',
+        icon: 'icon-xinkong',
+        number: accounts.CreditAmount,
+        title: '信控余额',
+      },
+    ]
+
+    const numberCards = numberOptions.map((item, key) => (
       <Col key={key} lg={6} md={12}>
         <NumberCard {...item} />
       </Col>
@@ -56,7 +83,7 @@ class Dashboard extends PureComponent {
 
     return (
       <Page
-        // loading={loading.models.dashboard && sales.length === 0}
+        // loading={loading.models.dashboard && consume.length === 0}
         className={styles.dashboard}
       >
         <Row gutter={24}>
@@ -65,10 +92,11 @@ class Dashboard extends PureComponent {
             <Card
               bordered={false}
               bodyStyle={{
-                padding: '24px 36px 24px 0',
+                height: 430,
+                padding: '24px 16px 12px 0',
               }}
             >
-              <Sales data={sales} />
+              <Sales data={consume} />
             </Card>
           </Col>
           <Col lg={6} md={24}>
@@ -96,29 +124,29 @@ class Dashboard extends PureComponent {
                   bodyStyle={{
                     padding: 0,
                     height: 204,
-                    background: Color.peach,
+                    // background: Color.red,
                   }}
                 >
-                  <ScrollBar>
+                  {/* <ScrollBar>
                     <Quote {...quote} />
-                  </ScrollBar>
+                  </ScrollBar> */}
                 </Card>
               </Col>
             </Row>
           </Col>
           <Col lg={12} md={24}>
             <Card bordered={false} {...bodyStyle}>
-              <RecentSales data={recentSales} />
+              <RecentSales data={ecslist} />
             </Card>
           </Col>
           <Col lg={12} md={24}>
             <Card bordered={false} {...bodyStyle}>
               <ScrollBar>
-                <Comments data={comments} />
+                <Comments data={rdsList} />
               </ScrollBar>
             </Card>
           </Col>
-          <Col lg={24} md={24}>
+          {/* <Col lg={24} md={24}>
             <Card
               bordered={false}
               bodyStyle={{
@@ -127,17 +155,17 @@ class Dashboard extends PureComponent {
             >
               <Completed data={completed} />
             </Card>
-          </Col>
+          </Col> */}
           <Col lg={8} md={24}>
             <Card bordered={false} {...bodyStyle}>
-              <Browser data={browser} />
+              <Browser data={cdnTopList} />
             </Card>
           </Col>
           <Col lg={8} md={24}>
             <Card bordered={false} {...bodyStyle}>
-              <ScrollBar>
-                <Cpu {...cpu} />
-              </ScrollBar>
+              {/* <ScrollBar> */}
+              {/* <Cpu {...cpu} /> */}
+              {/* </ScrollBar> */}
             </Card>
           </Col>
           <Col lg={8} md={24}>

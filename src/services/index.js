@@ -36,19 +36,19 @@ APIFunction.queryWeather = params => {
   })
 }
 
-APIFunction.queryDashboard = params => {
-  return request({
-    url: `/mock/sys/dashboard`,
-    data: params,
-  })
-}
+// APIFunction.queryDashboard = params => {
+//   return request({
+//     url: `/mock/sys/dashboard`,
+//     data: params,
+//   })
+// }
 
 APIFunction.getToken = params => {
   return request({
     method: `POST`,
     url: `/oauth/token`,
-    data:qs.stringify(params),
-    contentType: 'application/x-www-form-urlencoded'
+    data: qs.stringify(params),
+    contentType: 'application/x-www-form-urlencoded',
   })
 }
 

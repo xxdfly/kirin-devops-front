@@ -15,9 +15,14 @@ export default {
 
   queryPostList: '/posts',
 
-  queryDashboard: '/dashboard',
+  queryDashboard: '/aliyun/monthBill',
+  queryAccount: '/aliyun/account',
+  queryECS: '/aliyun/ecs',
+  queryRDS: '/aliyun/mysql',
+  queryCDNTopDomain: '/aliyun/cdnTopDomain',
 
   queryPrivilegeList: 'POST /auth/list',
+  queryPrililegeOptions: '/auth/listOptions',
   createPrivilege: 'POST /auth/save',
   updatePrivilege: 'POST /auth/update',
   removePrivilege: 'POST /auth/delete',
@@ -37,5 +42,13 @@ export default {
   createParticipant: 'POST /participant/create',
   deleteParticipant: 'POST /participant/delete',
 
-  queryExistsBranches: '/project/branches'
+  queryExistsBranches: '/project/branches',
+  triggerCompileJob: 'POST /compile/trigger',
+
+  queryScriptList: '/script/list',
+
+  queryJenkinsList: '/jenkins/list',
+  createJenkinsInfo: 'POST /jenkins/create',
+  queryJenkinsCredentials: '/jenkins/credentials',
+  syncJenkinsCredentials: '/jenkins/syncCredentials',
 }

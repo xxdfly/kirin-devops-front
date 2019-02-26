@@ -17,28 +17,34 @@ const status = {
   4: {
     color: Color.yellow,
   },
+  5: {
+    color: Color.peach,
+  },
 }
 
 function Browser({ data }) {
   const columns = [
     {
-      title: 'name',
-      dataIndex: 'name',
+      title: 'domainName',
+      dataIndex: 'domainName',
       className: styles.name,
     },
     {
-      title: 'percent',
-      dataIndex: 'percent',
+      title: 'trafficPercent',
+      dataIndex: 'trafficPercent',
       className: styles.percent,
-      render: (text, it) => <Tag color={status[it.status].color}>{text}%</Tag>,
+      render: (text, it) => <Tag color={status[it.rank].color}>{text}%</Tag>,
     },
   ]
   return (
     <Table
+      title={() => {
+        return '本月网站访问量排行'
+      }}
       pagination={false}
       showHeader={false}
       columns={columns}
-      rowKey={(record, key) => key}
+      // rowKey={(record, key) => key}
       dataSource={data}
     />
   )
