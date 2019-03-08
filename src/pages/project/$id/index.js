@@ -141,7 +141,8 @@ class ProjectDetail extends PureComponent {
       needTest,
       projectStatus,
       projectType,
-      scmProjectAppList
+      scmProjectAppList,
+      scmProjectParticipantInfoList
     } = data
 
     let developerList = []
@@ -149,8 +150,8 @@ class ProjectDetail extends PureComponent {
     let scmList = []
     let pmList = []
 
-    if(participantList){
-      participantList.map(item=>{
+    if(scmProjectParticipantInfoList){
+      scmProjectParticipantInfoList.map(item=>{
         if(item.role === "开发"){
           developerList.push(item)
         }else if(item.role === "测试"){
@@ -269,7 +270,7 @@ class ProjectDetail extends PureComponent {
       maskClosable: false,
       wrapClassName: 'vertical-center-modal',
       footer:null,
-      participantList: participantList,
+      participantList: scmProjectParticipantInfoList,
       searchedDevParticipantList:searchedDevParticipantList,
       searchedTestParticipantList:searchedTestParticipantList,
       searchedScmParticipantList:searchedScmParticipantList,
@@ -379,7 +380,7 @@ class ProjectDetail extends PureComponent {
                     <List.Item.Meta
                       title={
                         <div>
-                        <a href={"http://localhost:7000/code/"+item.appId}>{item.appName}</a>
+                        <a href={"http://xxd.devops.51kirin.com/code/"+item.appId}>{item.appName}</a>
 
                         <Tag color={appStatusList[item.appStatus].color} style={{marginLeft:'40%'}}>{item.appStatus}</Tag>
                         </div>

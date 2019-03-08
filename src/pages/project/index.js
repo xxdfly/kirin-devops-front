@@ -42,14 +42,14 @@ class Project extends PureComponent {
       item: modalType === 'create' ? {} : currentItem,
       visible: modalVisible,
       maskClosable: false,
-      style:{ width:1000 },
+      style: { width: 1000 },
       confirmLoading: loading.effects[`project/${modalType}`],
       title: `${
         modalType === 'create' ? i18n.t`Create Project` : i18n.t`Update Project`
       }`,
       wrapClassName: 'vertical-center-modal',
-      centered:true,
-      destroyOnClose:true,
+      centered: true,
+      destroyOnClose: true,
       onOk(data) {
         dispatch({
           type: `project/${modalType}`,

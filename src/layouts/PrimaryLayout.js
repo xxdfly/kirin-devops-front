@@ -70,9 +70,12 @@ class PrimaryLayout extends PureComponent {
         : routeList
 
     // Find a route that matches the pathname.
-    const currentRoute = newRouteList.find(
-      _ => _.route && pathMatchRegexp(_.route, location.pathname)
-    )
+    let currentRoute = {}
+    if (newRouteList) {
+      currentRoute = newRouteList.find(
+        _ => _.route && pathMatchRegexp(_.route, location.pathname)
+      )
+    }
 
     // Query whether you have permission to enter this page
     const hasPermission = currentRoute
@@ -80,7 +83,10 @@ class PrimaryLayout extends PureComponent {
       : false
 
     // MenuParentId is equal to -1 is not a available menu.
-    const menus = newRouteList.filter(_ => _.menuParentId !== '-1')
+    let menus = []
+    if (newRouteList) {
+      menus = newRouteList.filter(_ => _.menuParentId !== '-1')
+    }
 
     const headerProps = {
       menus,

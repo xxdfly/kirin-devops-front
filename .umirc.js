@@ -78,11 +78,13 @@ export default {
     },
     '/api/sys':{
       target: 'http://47.101.41.37:10010/',
-      changeOrigin: true
+      changeOrigin: true,
+      pathRewrite: { "^/api/sys" : "/api/sys" }
     },
     '/oauth/token':{
       target: 'http://47.101.41.37:10010/',
-      changeOrigin: true
+      changeOrigin: true,
+      pathRewrite: { "^/oauth/token" : "/oauth/token" }
     },
   },
   alias: {

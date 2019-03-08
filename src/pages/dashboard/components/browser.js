@@ -20,6 +20,9 @@ const status = {
   5: {
     color: Color.peach,
   },
+  6: {
+    color: Color.peach,
+  },
 }
 
 function Browser({ data }) {
@@ -33,7 +36,7 @@ function Browser({ data }) {
       title: 'trafficPercent',
       dataIndex: 'trafficPercent',
       className: styles.percent,
-      render: (text, it) => <Tag color={status[it.rank].color}>{text}%</Tag>,
+      render: (text, it) => <Tag>{text}%</Tag>,
     },
   ]
   return (

@@ -49,8 +49,7 @@ export default modelExtend(model, {
         yield put({
           type: 'updateState',
           payload: {
-            data: data.respData,
-            participantList: data.scmProjectParticipantInfoList
+            data: data.respData
           },
         })
       }
