@@ -77,12 +77,12 @@ export default {
       pathRewrite: { '^/api/sys/weather': '/v3/weather' },
     },
     '/api/sys':{
-      target: 'http://47.101.41.37:10010/',
+      target: 'https://api.devops.51kirin.com',
       changeOrigin: true,
       pathRewrite: { "^/api/sys" : "/api/sys" }
     },
     '/oauth/token':{
-      target: 'http://47.101.41.37:10010/',
+      target: 'https://api.devops.51kirin.com',
       changeOrigin: true,
       pathRewrite: { "^/oauth/token" : "/oauth/token" }
     },
