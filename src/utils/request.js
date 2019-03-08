@@ -8,20 +8,19 @@ import qs from 'qs'
 const { CancelToken } = axios
 window.cancelRequest = new Map()
 
-const whitelist = [
-  '/login',
-  '/oauth/token'
-]
+const whitelist = ['/login', '/oauth/token']
 
-export default function request(options)
- {
+export default function request(options) {
   let { data, url, method = 'get', contentType } = options
   const cloneData = cloneDeep(data)
   const token = () => window.localStorage.getItem('atoken') || ''
-  contentType = contentType !== undefined && contentType!=null ? contentType : 'application/json; charset=UTF-8'
+  contentType =
+    contentType !== undefined && contentType != null
+      ? contentType
+      : 'application/json; charset=UTF-8'
 
   try {
-    let domain = ''
+    let domain = 'http://api.devops.51kirin.com:10010'
     const urlMatch = url.match(/[a-zA-z]+:\/\/[^/]*/)
     if (urlMatch) {
       ;[domain] = urlMatch
@@ -37,13 +36,16 @@ export default function request(options)
       }
     }
     url = domain + url
+    console.log(url)
   } catch (e) {
     message.error(e.message)
   }
 
   options.headers = {
-    'Authorization' : whitelist.some(item => url.indexOf(item) > -1)?'':`Bearer ${token()}`,
-    'Content-Type'  : contentType
+    Authorization: whitelist.some(item => url.indexOf(item) > -1)
+      ? ''
+      : `Bearer ${token()}`,
+    'Content-Type': contentType,
   }
 
   options.url =
