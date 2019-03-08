@@ -12,8 +12,6 @@ const whitelist = ['/login', '/oauth/token']
 
 export default function request(options) {
   let { data, url, method = 'get', contentType } = options
-
-  console.log(options)
   const cloneData = cloneDeep(data)
   const token = () => window.localStorage.getItem('atoken') || ''
   contentType =
