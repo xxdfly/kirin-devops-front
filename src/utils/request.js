@@ -12,6 +12,8 @@ const whitelist = ['/login', '/oauth/token']
 
 export default function request(options) {
   let { data, url, method = 'get', contentType } = options
+
+  console.log(options)
   const cloneData = cloneDeep(data)
   const token = () => window.localStorage.getItem('atoken') || ''
   contentType =
@@ -21,6 +23,11 @@ export default function request(options) {
 
   try {
     let domain = 'https://api.devops.51kirin.com'
+    if (url.indexOf('/sys/weather') > -1) {
+      domain = 'https://api.seniverse.com/v3/weather'
+      url = '/now.json'
+    }
+
     const urlMatch = url.match(/[a-zA-z]+:\/\/[^/]*/)
     if (urlMatch) {
       ;[domain] = urlMatch
@@ -36,7 +43,6 @@ export default function request(options) {
       }
     }
     url = domain + url
-    console.log(url)
   } catch (e) {
     message.error(e.message)
   }

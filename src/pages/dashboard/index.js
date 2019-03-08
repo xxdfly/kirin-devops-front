@@ -111,10 +111,10 @@ class Dashboard extends PureComponent {
                     background: Color.blue,
                   }}
                 >
-                  <Weather
+                  {/* <Weather
                     {...weather}
                     loading={loading.effects['dashboard/queryWeather']}
-                  />
+                  /> */}
                 </Card>
               </Col>
               <Col lg={24} md={12}>

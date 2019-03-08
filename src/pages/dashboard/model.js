@@ -47,7 +47,7 @@ export default modelExtend(model, {
           pathMatchRegexp('/', pathname)
         ) {
           dispatch({ type: 'query' })
-          dispatch({ type: 'queryWeather' })
+          // dispatch({ type: 'queryWeather' })
           dispatch({ type: 'queryAccount' })
           dispatch({ type: 'queryECS' })
           dispatch({ type: 'queryRDS' })
