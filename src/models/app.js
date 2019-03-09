@@ -75,14 +75,11 @@ export default {
       try {
         const { code, respData } = yield call(queryUserInfo, payload)
         const { locationPathname } = yield select(_ => _.app)
-        console.log(code)
-        console.log(respData)
 
         if (code === 1 && respData) {
           const { respList } = yield call(queryRouteList)
           const { user } = respData
           // const { permissions } = user
-          console.log(respData)
           let routeList = respList
           // if (
           //   permissions.role === ROLE_TYPE.ADMIN ||
@@ -112,7 +109,6 @@ export default {
             },
           })
           if (pathMatchRegexp('/login', window.location.pathname)) {
-            console.log('ttttttttttttttttttttttttttttttttt')
             router.push({
               pathname: '/dashboard',
             })

@@ -1,6 +1,6 @@
 module.exports = {
   siteName: 'Kirin Devops',
-  copyright: 'Kirin Devops © 2018 xiaodong.xuexd',
+  copyright: 'Kirin Devops © 2019 xiaodong.xuexd',
   logoPath: '/logo.ico',
   apiPrefix: '/api/sys',
   fixedHeader: true, // sticky primary layout header

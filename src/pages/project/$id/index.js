@@ -392,7 +392,7 @@ class ProjectDetail extends PureComponent {
                     <List.Item.Meta
                       title={
                         <div>
-                        <a href={"https://devops.51kirin.com/code/"+item.appId}>{item.appName + item.appStatus}</a>
+                        <a href={"https://devops.51kirin.com/code/"+item.appId}>{item.appName}</a>
 
                         <Tag style={{marginLeft:'40%'}}>{item.appStatus}</Tag>
                         </div>
