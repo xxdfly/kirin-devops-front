@@ -75,11 +75,14 @@ export default {
       try {
         const { code, respData } = yield call(queryUserInfo, payload)
         const { locationPathname } = yield select(_ => _.app)
+        console.log(code)
+        console.log(respData)
 
-        if ( code===1 && respData ) {
+        if (code === 1 && respData) {
           const { respList } = yield call(queryRouteList)
           const { user } = respData
           // const { permissions } = user
+          console.log(respData)
           let routeList = respList
           // if (
           //   permissions.role === ROLE_TYPE.ADMIN ||
@@ -88,17 +91,17 @@ export default {
           //   permissions.visit = list.map(item => item.id)
           // }
           // else {
-            // routeList = list.filter(item => {
-            //   const cases = [
-            //     permissions.visit.includes(item.id),
-            //     item.mpid
-            //       ? permissions.visit.includes(item.mpid) || item.mpid === '-1'
-            //       : true,
-            //     item.bpid ? permissions.visit.includes(item.bpid) : true,
-            //   ]
-            //   return cases.every(_ => _)
-            // }
-            // )
+          // routeList = list.filter(item => {
+          //   const cases = [
+          //     permissions.visit.includes(item.id),
+          //     item.mpid
+          //       ? permissions.visit.includes(item.mpid) || item.mpid === '-1'
+          //       : true,
+          //     item.bpid ? permissions.visit.includes(item.bpid) : true,
+          //   ]
+          //   return cases.every(_ => _)
+          // }
+          // )
           // }
           yield put({
             type: 'updateState',
@@ -113,7 +116,7 @@ export default {
               pathname: '/dashboard',
             })
           }
-        } else if (queryLayout(config.layouts, locationPathname) !== 'public'||error) {
+        } else if (queryLayout(config.layouts, locationPathname) !== 'public') {
           router.push({
             pathname: '/login',
             search: stringify({
@@ -127,11 +130,10 @@ export default {
           pathname: '/login',
         })
       }
-
     },
 
     *signOut({ payload }, { call, put }) {
-      const data = yield call(logoutUser,payload)
+      const data = yield call(logoutUser, payload)
       if (data.success) {
         localStorage.clear()
         yield put({

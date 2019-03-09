@@ -44,7 +44,6 @@ class CreateCodeModule extends PureComponent {
     const { dispatch } = this.props
     e.preventDefault()
     this.props.form.validateFields((err, values) => {
-      console.log(values)
       values.authId = this.getAuthIdByDisplayName(values.codeCredentialId)
       values.codeCredentialId = this.getCredentialIdByDisplayName(
         values.codeCredentialId
@@ -56,7 +55,6 @@ class CreateCodeModule extends PureComponent {
         values.swarmCredentialId
       )
       values.config = this.handleConfigParams(values)
-      console.log('Received values of form: ', values)
       if (!err) {
         dispatch({
           type: 'code/create',
@@ -100,7 +98,8 @@ class CreateCodeModule extends PureComponent {
     for (const item of credentials) {
       if (item.displayName === value) {
         authId = item.id
-        break
+        return authId
+        // break
       }
     }
     return authId
