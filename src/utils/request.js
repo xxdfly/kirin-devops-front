@@ -20,7 +20,7 @@ export default function request(options) {
       : 'application/json; charset=UTF-8'
 
   try {
-    let domain = 'https://api.devops.51kirin.com:10010'
+    let domain = 'https://api.devops.51kirin.com'
     if (url.indexOf('/sys/weather') > -1) {
       domain = 'https://api.seniverse.com/v3/weather'
       url = '/now.json'
