@@ -112,6 +112,7 @@ export default {
             },
           })
           if (pathMatchRegexp('/login', window.location.pathname)) {
+            console.log('ttttttttttttttttttttttttttttttttt')
             router.push({
               pathname: '/dashboard',
             })
