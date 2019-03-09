@@ -2,7 +2,7 @@
   "name": "kirin-devops",
   "version": "5.0.1",
   "private": true,
-  "description": "An admin dashboard application demo built upon Ant Design and UmiJS",
+  "description": "KIRIN DEVOPS",
   "dependencies": {
     "@lingui/react": "^2.7.1",
     "ant-design-pro": "^2.1.1",
@@ -100,7 +100,7 @@
   },
   "scripts": {
     "analyze": "cross-env ANALYZE=1 umi build",
-    "build": "umi build",
+    "build": "COMPRESS=none umi build",
     "lint:js": "eslint --ext .js src",
     "lint:style": "stylelint \"src/**/*.less\" --syntax less",
     "start": "umi dev",
