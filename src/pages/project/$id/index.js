@@ -48,6 +48,18 @@ const appStatusList = {
   '编译失败': {
     color: Color.red,
     text: 'Fail'
+  },
+  '关闭':{
+    color: Color.red,
+    text: '关闭'
+  },
+  '分支创建中':{
+    color: Color.green,
+    text: 'Branch Creating',
+  },
+  '合并成功':{
+    color: Color.green,
+    text: 'Merge Success',
   }
 }
 
@@ -380,9 +392,9 @@ class ProjectDetail extends PureComponent {
                     <List.Item.Meta
                       title={
                         <div>
-                        <a href={"http://xxd.devops.51kirin.com/code/"+item.appId}>{item.appName}</a>
+                        <a href={"https://devops.51kirin.com/code/"+item.appId}>{item.appName + item.appStatus}</a>
 
-                        <Tag color={appStatusList[item.appStatus].color} style={{marginLeft:'40%'}}>{item.appStatus}</Tag>
+                        <Tag style={{marginLeft:'40%'}}>{item.appStatus}</Tag>
                         </div>
                       }
                       description={
